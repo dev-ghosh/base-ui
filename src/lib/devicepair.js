@@ -247,7 +247,10 @@ export async function startScanner(video, onCode) {
     stopped = true;
     clearTimeout(timer);
     stream.getTracks().forEach((t) => t.stop());
-    video.srcObject = null;
+    // Each run owns its own stream. Only detach if it is still OURS: under React
+    // StrictMode a second scanner may already have attached its stream to this
+    // same <video>, and clearing it would leave that one with a black viewfinder.
+    if (video.srcObject === stream) video.srcObject = null;
   }
 
   async function tick() {

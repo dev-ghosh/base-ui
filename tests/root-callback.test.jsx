@@ -29,6 +29,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });
 
@@ -115,6 +116,41 @@ describe('root page: QR pairing (#pair)', () => {
     render(<RootPage />);
     await waitFor(() => expect(lastReplace()).toBe('/login'));
     expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+});
+
+describe('root page: failed magic-link return (#error=...)', () => {
+  const EXPIRED = '/#error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired';
+
+  it('signed out: clears the hash and goes to /login?error=link', async () => {
+    setUrl(EXPIRED);
+    render(<RootPage />);
+    await waitFor(() => expect(lastReplace()).toBe('/login?error=link'));
+    expect(window.location.hash).toBe('');
+    expect(localStorage.getItem('rie_session')).toBeNull();
+  });
+
+  it('a bare #error_code= is treated the same', async () => {
+    setUrl('/#error_code=otp_expired');
+    render(<RootPage />);
+    await waitFor(() => expect(lastReplace()).toBe('/login?error=link'));
+  });
+
+  it('with an existing session: clears the hash and carries on to /today', async () => {
+    localStorage.setItem('rie_session', JSON.stringify({ accessToken: 't', refreshToken: '', expiresAt: Date.now() + 9e9 }));
+    setUrl(EXPIRED);
+    render(<RootPage />);
+    await waitFor(() => expect(lastReplace()).toBe('/today'));
+    expect(window.location.hash).toBe('');
+  });
+});
+
+describe('root page: unexpected failure', () => {
+  it('an unexpected throw still ends on /login, never a blank page', async () => {
+    setUrl('/#access_token=garbage');
+    vi.spyOn(window.history, 'replaceState').mockImplementation(() => { throw new Error('boom'); });
+    render(<RootPage />);
+    await waitFor(() => expect(lastReplace()).toBe('/login'));
   });
 });
 

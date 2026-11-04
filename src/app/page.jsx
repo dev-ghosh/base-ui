@@ -65,11 +65,23 @@ export default function RootPage() {
         return;
       }
 
+      // 2b. A failed magic-link return: Supabase redirects an expired or already
+      //     used link to /#error=access_denied&error_code=otp_expired&... with no
+      //     token. Say so on the sign-in screen (plan Review Focus 1); a user who
+      //     is already signed in just carries on.
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      if (hashParams.has('error') || hashParams.has('error_code')) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+        router.replace(getSession() ? landing : '/login?error=link');
+        return;
+      }
+
       // 3. Nothing to complete: an existing session goes in, anyone else signs in.
       router.replace(getSession() ? landing : '/login');
     }
 
-    run();
+    // An unexpected throw must never leave a blank page.
+    run().catch(() => { router.replace('/login'); });
   }, [router]);
 
   return <main aria-busy="true" />;
