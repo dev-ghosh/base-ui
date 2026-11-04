@@ -54,7 +54,7 @@ with their tests. Read the whole old module before porting any screen (old `CLAU
 ## Running tests
 
 - `npm test` runs `node tests/run-all.mjs` (every `tests/*.test.mjs` with plain `node`, non-zero exit on
-  any failure) and then `vitest run --passWithNoTests` (React/jsdom tests, `tests/**/*.test.jsx` only).
+  any failure) and then `vitest run` (React/jsdom tests, `tests/**/*.test.jsx` only).
 - Single logic test: `node tests/<name>.test.mjs`.
 - Build check: `npm run build`.
 - Testing writes real data (the only backend is production). Use a viewer-role account or take care.

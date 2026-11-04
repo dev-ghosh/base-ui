@@ -10,6 +10,5 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['tests/**/*.test.jsx'],
-    passWithNoTests: true,
   },
 });
