@@ -219,6 +219,28 @@ auth.decodeSession('dev_x', 'r');
 await auth.signOut();
 check(calls.length === 0 && !mem.has(SESSION_KEY), 'signOut with a dev_ token clears locally and makes no request');
 
+// ---- scheduleAutoRefresh: delay must fit setTimeout's 32-bit limit ---------
+// The old code passed ~30 days (2.59e9 ms) which overflows, fires after ~1 ms and
+// re-arms itself against /auth/v1/token. Deliberate deviation: clamp.
+{
+  reset();
+  const warnings = [];
+  const onWarn = (w) => warnings.push(w.name);
+  process.on('warning', onWarn);
+  const realSetTimeout = globalThis.setTimeout;
+  const delays = [];
+  globalThis.setTimeout = (fn, ms) => { delays.push(ms); return 0; };
+  mem.set(SESSION_KEY, JSON.stringify({ accessToken: token, refreshToken: 'RT', expiresAt: Date.now() + 30 * DAY }));
+  auth.scheduleAutoRefresh();
+  globalThis.setTimeout = realSetTimeout;
+  check(delays.length === 1 && delays[0] > 0 && delays[0] <= 2 ** 31 - 1, `30-day session: setTimeout delay (${delays[0]}) is > 0 and <= 2**31-1`);
+  // And a real (unstubbed) timer with that session must not warn.
+  auth.scheduleAutoRefresh();
+  await new Promise((r) => realSetTimeout(r, 50));
+  check(!warnings.includes('TimeoutOverflowWarning'), 'no TimeoutOverflowWarning emitted');
+  process.off('warning', onWarn);
+}
+
 auth.cancelAutoRefresh();
 if (bad) { console.error(`${bad} check(s) failed`); process.exit(1); }
 process.exit(0);

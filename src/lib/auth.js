@@ -309,7 +309,11 @@ export function scheduleAutoRefresh() {
   const s = getSession();
   if (!s?.expiresAt) return;
   const ms = Math.max(s.expiresAt - Date.now() - 30 * 60 * 1000, 60 * 60 * 1000);
-  _refreshTimer = setTimeout(() => { refreshSession(); }, ms);
+  // Deliberate deviation from the old code: setTimeout takes a 32-bit signed delay
+  // (max 2**31 - 1 ms, ~24.8 days). The old ~30-day delay overflowed, fired after
+  // ~1 ms and re-armed itself against /auth/v1/token. Clamp it.
+  const delay = Math.min(ms, 2 ** 31 - 1);
+  _refreshTimer = setTimeout(() => { refreshSession(); }, delay);
 }
 
 export function cancelAutoRefresh() {
