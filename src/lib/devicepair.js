@@ -26,7 +26,7 @@
  *    import), so this module imports cleanly in plain Node;
  *  - pairUrl() always targets the site root, because src/app/page.jsx is the
  *    only place that reads `#pair=` (spec C13); the old code used the pathname;
- *  - renderQr() wrote an SVG string with innerHTML. buildQr() returns the SVG
+ *  - renderQr() injected an SVG string into the DOM. buildQr() returns the SVG
  *    geometry instead and PairShow.jsx draws it as JSX;
  *  - jsQR used to be injected as a classic <script>. It is now an ES module in
  *    src/lib/vendor/ and, like the encoder, only ever loaded by dynamic import().
