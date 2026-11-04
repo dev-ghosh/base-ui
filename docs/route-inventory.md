@@ -289,3 +289,29 @@ Proposed additions (C7 applied to toggles/tabs/viewers the spec section 6 does n
 /team/cards                 /team/table
 /profile/profile            /profile/notifications   /profile/appearance   /profile/security
 ```
+
+## 12. Rulings (controller, 2026-11-04; binding for Tasks 1-17)
+
+These settle every item marked "to confirm" above. Spec C7 is the authority; each is cheap to reverse.
+
+1. **Proposed segments are accepted** (C7(b)): `/work/decide/{business,system}`, `/contacts/{table,cards}`,
+   `/escalations/{waiting,raised,open,closed}`, `/team/{cards,table}`, `/profile/{general,notifications,appearance,security}`
+   (`general` replaces the awkward `/profile/profile`; the tab label stays "Profile"), and the record viewer
+   `/work/initiatives/[id]` (intercepted, `mo-entity-det`). The index route of each group redirects to the old
+   default: decide -> `business`, contacts -> `table`, team -> `cards`, profile -> `general`, escalations ->
+   `waiting` if anything waits on the user else `open` (client-side redirect after data loads).
+2. **Matrix drill stays an overlay** driven by search params `c f k t pv` (old design: "NOT a route change").
+   Its board/list/pivot tabs are search params, not segments.
+3. **Four themes** are carried: `dark`, `light`, `spc`, `spc-modern`, stored in `localStorage['rie-theme']`.
+4. **Legacy `?tab=`** additionally accepts `hr-automation` -> `/hr-automation` and `decide` -> `/work/decide`.
+   `tasks|work` -> `/work/matrix` (the stored `rie_task_surface` is replaced by the route and ignored).
+   `analytics` -> `/analytics/overview`.
+5. **Scope** is the search param `?scope=mine|team|everyone` on `/work/*`, defaulting to the stored `rie_work_scope`
+   (then `resolveScope`). Triage scope is `?scope=mine|all` (default `mine`).
+6. **Record ids** are route params compared as strings; coerce to number for contacts, leads and events.
+7. **Direct visit to a viewer route** (e.g. `/work/tasks/<unknown id>`) renders a not-found message inside the
+   page frame, never a crash; an empty Triage queue shows its empty state.
+8. **`mo-analytics`** is dead markup and is not ported. `mo-access`, `mo-workload`, `mo-activity`,
+   `mo-smart-search`, alerts panel and tour stay overlay-state.
+9. Line endings: this machine converts LF to CRLF; byte-exact CSS copies must be compared with line endings
+   normalised to LF.
