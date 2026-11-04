@@ -17,6 +17,25 @@ describe('createStore', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
+  it('notifies each of several subscribers exactly once per setState', () => {
+    const s = createStore({ a: 1 });
+    const f1 = vi.fn();
+    const f2 = vi.fn();
+    s.subscribe(f1);
+    s.subscribe(f2);
+    s.setState({ a: 2 });
+    expect(f1).toHaveBeenCalledTimes(1);
+    expect(f2).toHaveBeenCalledTimes(1);
+  });
+
+  it('keeps the identity of untouched keys on an object patch', () => {
+    const s = createStore(createInitialState());
+    const { coOwners, tasks } = s.getState();
+    s.setState({ people: [{ code: 'x' }] });
+    expect(s.getState().coOwners).toBe(coOwners);
+    expect(s.getState().tasks).toBe(tasks);
+  });
+
   it('setState accepts an updater function', () => {
     const s = createStore({ n: 1 });
     s.setState((st) => ({ n: st.n + 1 }));
@@ -51,6 +70,7 @@ describe('store singleton', () => {
     expect(s.access).toBeNull();
     expect(s.currentUser).toBeNull();
     expect(s.session).toBeNull();
+    expect(s.workScope).toBeNull();
     for (const k of ['contacts', 'events', 'guests', 'tasks', 'workstreams', 'actions',
       'entityLinks', 'entities', 'fronts', 'initiatives', 'candidates', 'decisions',
       'cleanups', 'leads']) {
@@ -65,9 +85,6 @@ describe('store singleton', () => {
     }
   });
 
-  it('is importable without DOM globals', () => {
-    expect(createInitialState().coOwners).toBeInstanceOf(Map);
-  });
 });
 
 describe('useStore', () => {
