@@ -61,6 +61,12 @@ export function createInitialState() {
     decisions: [], // decision_queue WHERE status='pending'
     cleanups: [], // cleanup_queue WHERE status='pending'
 
+    // Decide: v_decision_queue rows (kind, age_days, entity_title, company, func ...), the shape the old
+    // decide.js held in its module-level `rows`; `decideSweep` is the last sweep, kept so it can be put back.
+    decideRows: [],
+    decideLoaded: false,
+    decideSweep: [],
+
     // entity_events audit rows (newest 60), filled by loadData
     entityEvents: [],
     // escalations rows. Filled by the escalations loader; realtime folds single rows into it.

@@ -100,3 +100,21 @@ export function mineSet(tasks, links, me) {
   for (const a of ancestorsOf(ids, links)) set.add(a);
   return set;
 }
+
+/**
+ * Is an entity id (task, workstream, initiative) in the scope? `mineIds` is mineSet(). A decision with
+ * no entity is visible in every scope: nobody else would ever see it (js/work.js idInScope).
+ */
+export function idInScope(id, scope, mineIds) {
+  if (id == null || id === '') return true;
+  if (scope === 'everyone') return true;
+  const mine = mineIds.has(String(id));
+  return scope === 'mine' ? mine : !mine;
+}
+
+/** An initiative or workstream is mine when I own it or it contains one of my tasks (js/work.js entityInScope). */
+export function entityInScope(e, scope, me, mineIds) {
+  if (scope === 'everyone') return true;
+  const mine = (!!me && e.ownerCode === me) || mineIds.has(String(e.id));
+  return scope === 'mine' ? mine : !mine;
+}
