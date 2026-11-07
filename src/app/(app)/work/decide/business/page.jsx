@@ -1,8 +1,12 @@
-'use client';
+import { Suspense } from 'react';
+import DecideView from '@/features/work/decide/DecideView.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// Work > Decide, the `business` stream (a route segment, docs/route-inventory.md ruling 12.1). The scope comes
+// from the URL (useSearchParams), which needs a Suspense boundary.
 export default function Page() {
-  return <PagePlaceholder title="Work: Decide (business)" />;
+  return (
+    <Suspense fallback={null}>
+      <DecideView kind="business" />
+    </Suspense>
+  );
 }

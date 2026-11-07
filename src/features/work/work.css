@@ -79,3 +79,30 @@ html.ro .tf-bulk {
 .kb-card.kb-sel-on {
   border-color: var(--ac);
 }
+
+/* ── Decide ───────────────────────────────────────────────────────────────────
+ * The stream switcher is a pair of links (the streams are route segments), not buttons. The old
+ * stylesheet only styles `.dq-tabs button`; this gives `.dq-tabs a` the same look. */
+.dq-tabs a {
+  padding: 7px 13px;
+  border-radius: var(--rs);
+  border: 1px solid var(--bd);
+  background: transparent;
+  color: var(--txm);
+  font: inherit;
+  font-size: .78rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--trans);
+}
+
+.dq-tabs a:hover {
+  border-color: var(--ac);
+  color: var(--ac);
+}
+
+.dq-tabs a.on {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: var(--ac-on);
+}
