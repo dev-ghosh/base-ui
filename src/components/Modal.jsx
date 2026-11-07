@@ -11,9 +11,10 @@ import { useModal } from '../hooks/useModal.js';
  *
  * The backdrop closes it, as the old document-level click handler did, unless
  * `dismissible={false}` (mo-user, mo-triage). The title bar is always present (as in the old markup); the body is mounted only while open.
+ * `ariaLabel` names the dialog when `title` is not a plain string (or absent, as in the task viewer).
  * Size: `wide` is `.mb-lg`; `maxWidth` is the old inline max-width on `.mb`.
  */
-export default function Modal({ id, title, open: openProp, onClose, dismissible = true, wide = false, maxWidth, className, children }) {
+export default function Modal({ id, title, open: openProp, onClose, dismissible = true, wide = false, maxWidth, className, ariaLabel, children }) {
   const m = useModal(id ?? '');
   const open = openProp ?? m.open;
   const close = onClose ?? m.hide;
@@ -29,7 +30,7 @@ export default function Modal({ id, title, open: openProp, onClose, dismissible 
         style={maxWidth ? { maxWidth } : undefined}
         role="dialog"
         aria-modal="true"
-        aria-label={typeof title === 'string' ? title : undefined}
+        aria-label={typeof title === 'string' ? title : ariaLabel}
       >
         {title != null && (
           <div className="mh">

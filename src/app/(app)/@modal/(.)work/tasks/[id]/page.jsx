@@ -1,9 +1,6 @@
-'use client';
+import { TaskViewModal } from '@/features/tasks/TaskViewRoute.jsx';
 
-import { ModalPlaceholder } from '@/components/PagePlaceholder.jsx';
-
-// Placeholder for the record viewer shown over the page on a soft navigation to /work/tasks/[id].
-// A later task replaces it with the real viewer (the full-page twin renders on a direct visit).
+// The task viewer over whatever page opened it (the real URL is /work/tasks/<id>).
 export default function Page() {
-  return <ModalPlaceholder title="Task" />;
+  return <TaskViewModal />;
 }

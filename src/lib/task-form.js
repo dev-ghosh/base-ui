@@ -57,7 +57,8 @@ export function formFromTask(t = {}, { registry = [], people = [], contacts = []
   // is not among them reads as unset (the old <select> had no matching <option>).
   const company = t.company || '';
   const active = registry.filter((r) => r.company === company && r.active).map((r) => r.func);
-  const func = company && active.includes(t.func || '') ? (t.func || '') : '';
+  // (While the registry has not loaded there is nothing to compare with, so the stored function is kept.)
+  const func = registry.length === 0 ? (t.func || '') : (company && active.includes(t.func || '') ? (t.func || '') : '');
 
   return {
     id: t.id != null ? String(t.id) : null,

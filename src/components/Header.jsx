@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
+import { useTaskForm } from '../features/tasks/hooks/useTaskForm.js';
 import { useTheme } from '../hooks/useTheme.js';
 import { identityOf } from '../lib/identity.js';
 import { titleForPath } from '../lib/nav.js';
@@ -18,8 +19,6 @@ function openSmartSearch() {}
 function syncNow() {}
 // TODO(Task 13): alerts panel (openAlertsPanel), with the unread badge on #notif-btn
 function openAlertsPanel() {}
-// TODO(Task 8): openAddTask()
-function openAddTask() {}
 // TODO(Task 11): openAddContact()
 function openAddContact() {}
 // TODO(Task 10): openAddLead()
@@ -41,6 +40,7 @@ export default function Header({ session, onSignOut }) {
   const pathname = usePathname();
   const router = useRouter();
   const { access } = useAccess();
+  const { openAdd: openAddTask } = useTaskForm();
   const { theme, setTheme } = useTheme();
   const { open: sideOpen } = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.getState, sidebarStore.getState);
   const [menu, setMenu] = useState(null);   // null | 'theme' | 'new' | 'user'
