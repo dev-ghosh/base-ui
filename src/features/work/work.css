@@ -1,0 +1,33 @@
+/* The Work surface switcher is a row of links (the surfaces are routes), not buttons. The old
+ * stylesheet only styles `.mx-seg button`; this gives `.mx-seg a` the same look. globals.css is
+ * a verbatim copy of the old CSS and stays untouched. */
+.mx-seg a {
+  border: none;
+  background: transparent;
+  color: var(--mx-ink2);
+  font-family: inherit;
+  font-size: .75rem;
+  font-weight: 500;
+  padding: 4px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--trans);
+}
+
+.mx-seg a:hover {
+  color: var(--mx-ink);
+}
+
+.mx-seg a.on {
+  background: var(--mx-surface);
+  color: var(--mx-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width:720px) {
+  .mx-seg a {
+    flex: 1;
+    text-align: center;
+  }
+}
