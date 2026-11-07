@@ -41,9 +41,11 @@ const { statusStore, resetStatus } = await import('../src/lib/status.js');
 const { loadData, syncData } = await import('../src/lib/load-data.js');
 const { writeCache, readCache } = await import('../src/lib/data-cache.js');
 
+const asUser = (id) => mem.set('rie_session', JSON.stringify({ accessToken: 't', userId: id }));
 const reset = () => {
   store.setState(createInitialState());
   resetStatus(); calls.length = 0; rows = {}; failing = {}; mem.clear(); quotaFull = false;
+  asUser('user-a');
 };
 const ENTITY = (id, tier, extra = {}) => ({ id, tier, title: 'T-' + id, status: 'pending', ...extra });
 
@@ -169,7 +171,7 @@ check(store.getState().tasks.length === 1, 'the store keeps what it had');
 
 // ---- a stale-schema cache is not used ----
 reset();
-mem.set('rie_data_cache', JSON.stringify({ schema: 1, ts: Date.now(), tasks: [{ id: 'old' }] }));
+mem.set('rie_data_cache', JSON.stringify({ schema: 2, userId: 'user-a', ts: Date.now(), tasks: [{ id: 'old' }] }));
 failing = { 'contacts?': 500 };
 await loadData();
 check(statusStore.getState().kind === 'error' && store.getState().tasks.length === 0, 'old-schema cache is ignored: error status, nothing restored');
@@ -194,6 +196,95 @@ calls.length = 0;
 await syncData();
 check(!mem.has('rie_cache_v3'), 'syncData removes rie_cache_v3');
 check(calls.length === 16, 'syncData reloads all endpoints');
+
+// ---- R25: the cache never leaks between people ----
+reset();
+store.setState({ tasks: [{ id: 'a-1', task: "A's task" }] });
+writeCache();                                   // written while user A is signed in
+store.setState(createInitialState());
+asUser('user-b');                               // B signs in on the same browser
+failing = { 'contacts?': 500 };
+await loadData();
+check(statusStore.getState().kind === 'error' && statusStore.getState().msg.startsWith('Could not load data: '),
+  "user B's failed load shows the error status, not A's cache");
+check(store.getState().tasks.length === 0, "user A's tasks are not shown to user B");
+check(!mem.has('rie_data_cache'), "user A's cache entry is gone");
+
+reset();                                        // same user: offline fallback still works
+store.setState({ tasks: [{ id: 'a-1', task: 'Mine' }] });
+writeCache();
+store.setState(createInitialState());
+failing = { all: true };
+await loadData();
+check(/^Showing cached data \(\d+m ago\)$/.test(statusStore.getState().msg) && store.getState().tasks[0].task === 'Mine',
+  'same user, offline: the cache is still served');
+
+// sign-out clears the cache key and the lists
+const { onSessionEnded } = await import('../src/lib/user-data.js');
+reset();
+rows = { 'contacts?order=id.asc': [{ id: 1, n: 'Sam' }], 'people?': [{ code: 'pat' }] };
+await loadData();
+check(mem.has('rie_data_cache') && store.getState().contacts.length === 1, 'precondition: loaded and cached');
+onSessionEnded();
+check(!mem.has('rie_data_cache'), 'sign-out clears rie_data_cache');
+check(store.getState().contacts.length === 0 && store.getState().people.length === 0 && store.getState().coOwners.size === 0,
+  'sign-out empties the lists, people and co-owners');
+
+// the real sign-out path (auth.clearSession) does it
+const auth = await import('../src/lib/auth.js');
+reset();
+await loadData();
+auth.clearSession();
+check(!mem.has('rie_data_cache') && !mem.has('rie_session'), 'clearSession() ends the session and clears the cache');
+
+// a different person signing in over the top (decodeSession) ends the previous user's data
+reset();
+rows = { 'contacts?order=id.asc': [{ id: 1, n: 'Sam' }] };
+await loadData();
+const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64');
+auth.decodeSession(`${b64({ alg: 'x' })}.${b64({ sub: 'user-b', email: 'b@x.co' })}.sig`, 'r');
+check(!mem.has('rie_data_cache') && store.getState().contacts.length === 0, "a new person signing in clears the previous one's cache and lists");
+
+// an in-flight load that resolves after sign-out writes nothing
+reset();
+let release;
+const gate = new Promise((r) => { release = r; });
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (url) => { await gate; return realFetch(url); };
+rows = { 'contacts?order=id.asc': [{ id: 1, n: 'Sam' }], 'people?': [{ code: 'pat' }], 'entities?tier=eq.task': [ENTITY('t1', 'task')] };
+const inflight = loadData();
+auth.clearSession();                            // user signs out while the request is out
+statusStore.setState({ kind: '', msg: 'Signed out' });
+release();
+const fresh = await inflight;
+check(fresh === false, 'a stale load reports false');
+check(store.getState().contacts.length === 0 && store.getState().tasks.length === 0 && store.getState().people.length === 0,
+  'in-flight load resolving after sign-out leaves the store empty');
+check(!mem.has('rie_data_cache'), '... and writes no cache');
+check(statusStore.getState().msg === 'Signed out', '... and does not touch the status bar');
+
+// ... also when the user changed (B signed in while A's load was out)
+reset();
+const gate2 = new Promise((r) => { release = r; });
+globalThis.fetch = async (url) => { await gate2; return realFetch(url); };
+rows = { 'contacts?order=id.asc': [{ id: 1, n: 'A-contact' }] };
+const inflight2 = loadData();
+asUser('user-b');
+release();
+await inflight2;
+check(store.getState().contacts.length === 0 && !mem.has('rie_data_cache'), "A's in-flight load is dropped when B is now signed in");
+
+// a stale FAILING load does not restore a cache or set an error either
+reset();
+const gate3 = new Promise((r) => { release = r; });
+globalThis.fetch = async () => { await gate3; throw new TypeError('Failed to fetch'); };
+const inflight3 = loadData();
+auth.clearSession();
+statusStore.setState({ kind: '', msg: 'Signed out' });
+release();
+await inflight3;
+check(statusStore.getState().msg === 'Signed out' && store.getState().tasks.length === 0, 'a stale failing load changes nothing');
+globalThis.fetch = realFetch;
 
 if (bad) { console.error(`\n${bad} check(s) failed`); process.exit(1); }
 console.log('\nall load-data checks passed');

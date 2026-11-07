@@ -1,4 +1,5 @@
 import { sbUrl, sbKey, getStorage, SESSION_KEY } from './config.js';
+import { onSessionEnded } from './user-data.js';
 
 // Resolved per call so a missing env var throws from the function that needs it
 // (never at import), and so tests can set the env first.
@@ -225,6 +226,11 @@ export function decodeSession(accessToken, refreshToken) {
       displayName: payload.user_metadata?.display_name || payload.email?.split('@')[0] || 'Admin',
       expiresAt:   Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days
     };
+    // A different person signing in over the top of someone: that one's data ends here.
+    try {
+      const prev = JSON.parse(getStorage()?.getItem(SESSION_KEY) || 'null');
+      if (prev?.userId && prev.userId !== session.userId) onSessionEnded();
+    } catch { /* unreadable previous session */ }
     getStorage().setItem(SESSION_KEY, JSON.stringify(session));
     return session;
   } catch { return null; }
@@ -247,6 +253,7 @@ export function getSession() {
 
 export function clearSession() {
   getStorage()?.removeItem(SESSION_KEY);
+  onSessionEnded();   // the offline cache and the loaded lists belong to the person who just left
 }
 
 let _refreshInFlight = null;

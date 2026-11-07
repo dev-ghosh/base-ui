@@ -160,7 +160,7 @@ describe('useRealtime', () => {
   });
 
   it('writes the offline cache after a batch that changed the store, not after echoes', () => {
-    const mem = new Map();
+    const mem = new Map([['rie_session', JSON.stringify({ accessToken: 't', userId: 'u1' })]]);
     vi.stubGlobal('localStorage', {
       getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k),
     });

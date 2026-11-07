@@ -14,6 +14,7 @@ import {
 } from './mappers.js';
 import { setStatus } from './status.js';
 import { readCache, writeCache, cacheAgeMinutes, CACHED_LISTS } from './data-cache.js';
+import { beginLoad, isCurrentLoad } from './user-data.js';
 
 /**
  * Fetch everything and replace the store's lists.
@@ -23,6 +24,9 @@ import { readCache, writeCache, cacheAgeMinutes, CACHED_LISTS } from './data-cac
  */
 export async function loadData() {
   setStatus('syncing', 'Syncing database…');
+  // R25: a load belongs to the person (and sign-in) that started it. If they sign out, or
+  // someone else signs in, while it is in flight its result is dropped untouched.
+  const token = beginLoad();
   try {
     // v3: tasks are read from entities WHERE tier='task' (trg_tasks_sync_entities keeps them in sync)
     const [cRows, entityTaskRows, eRows, gRows, leadRows, initRows, candidateRows, decisionRows,
@@ -45,6 +49,8 @@ export async function loadData() {
       safeGet('entity_owners', 'removed_at=is.null&select=entity_id,person_code'),
       safeGet('entity_events', 'order=created_at.desc&limit=60'),
     ]);
+
+    if (!isCurrentLoad(token)) return false;
 
     // People and co-owners FIRST: rowToEntity resolves owner names and
     // coOwnerCodes through them, so mapping tasks earlier would label every
@@ -94,6 +100,7 @@ export async function loadData() {
     );
     return true;
   } catch (e) {
+    if (!isCurrentLoad(token)) return false;
     const cache = readCache();
     if (cache) {
       const restored = {};

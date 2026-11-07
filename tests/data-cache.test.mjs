@@ -13,11 +13,14 @@ globalThis.localStorage = {
   removeItem: (k) => { mem.delete(k); },
 };
 
+const asUser = (id) => (id ? mem.set('rie_session', JSON.stringify({ accessToken: 't', userId: id })) : mem.delete('rie_session'));
+asUser('user-a');
+
 const { store } = await import('../src/store/store.js');
 const cache = await import('../src/lib/data-cache.js');
 
 check(cache.CACHE_KEY === 'rie_data_cache', 'cache key is the old one (rie_data_cache)');
-check(cache.CACHE_SCHEMA === 2, 'schema version is 2 (as the old app)');
+check(cache.CACHE_SCHEMA === 3, 'schema version is 3 (2 + the owner id; older caches are discarded)');
 
 // empty -> null
 check(cache.readCache() === null, 'no entry: readCache() is null');
@@ -31,7 +34,7 @@ store.setState({
 });
 cache.writeCache();
 const back = cache.readCache();
-check(back && back.schema === 2 && typeof back.ts === 'number', 'writeCache stores schema and timestamp');
+check(back && back.schema === 3 && typeof back.ts === 'number', 'writeCache stores schema and timestamp');
 check(back.tasks.length === 1 && back.tasks[0].task === 'Call Pat', 'tasks round trip');
 check(back.contacts[0].name === 'Sam' && back.entityLinks[0].childId === 'b', 'contacts and entityLinks round trip');
 check(!('people' in back) && !('coOwners' in back), 'people/coOwners are not cached (old behaviour)');
@@ -44,8 +47,27 @@ check(true, 'all twelve lists are cached');
 cache.writeCache({ ...store.getState(), tasks: [] });
 check(cache.readCache().tasks.length === 0, 'writeCache(state) caches the given state');
 
+// per-user: the cache is only served to the person who wrote it (R25)
+cache.writeCache();
+check(JSON.parse(mem.get('rie_data_cache')).userId === 'user-a', 'writeCache stores the signed-in user id');
+asUser('user-b');
+check(cache.readCache() === null, 'cache written by user A is not served to user B');
+check(!mem.has('rie_data_cache'), '... and is removed');
+asUser('user-a');
+cache.writeCache();
+asUser(null);
+check(cache.readCache() === null && !mem.has('rie_data_cache'), 'no session: cache is not served and is removed');
+cache.writeCache();
+check(!mem.has('rie_data_cache'), 'no session: writeCache writes nothing (cannot attribute it)');
+asUser('user-a');
+mem.set('rie_data_cache', JSON.stringify({ schema: 3, ts: Date.now(), tasks: [{ id: 'x' }] }));
+check(cache.readCache() === null && !mem.has('rie_data_cache'), 'entry without a user id is discarded');
+cache.writeCache();
+cache.clearCache();
+check(!mem.has('rie_data_cache'), 'clearCache removes the entry');
+
 // stale schema is discarded and deleted
-mem.set('rie_data_cache', JSON.stringify({ schema: 1, ts: Date.now(), tasks: [{ id: 'x' }] }));
+mem.set('rie_data_cache', JSON.stringify({ schema: 2, userId: 'user-a', ts: Date.now(), tasks: [{ id: 'x' }] }));
 check(cache.readCache() === null, 'older schema: readCache() is null');
 check(!mem.has('rie_data_cache'), 'older schema: entry is removed');
 
@@ -61,6 +83,7 @@ check(cache.cacheAgeMinutes({ ts: now - 31000 }, now) === 1, 'age: over 30s roun
 
 // full / unavailable storage never throws
 mem.clear();
+asUser('user-a');
 quotaFull = true;
 let threw = false;
 try { cache.writeCache(); } catch { threw = true; }
