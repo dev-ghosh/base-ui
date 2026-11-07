@@ -13,5 +13,14 @@ export function recordActivity(_action, _target, _person, _type = 'task') {}
 // TODO(Task 13): the Escalate dialog (js/escalations.js openEscalateModal)
 export function openEscalateModal(_taskId) {}
 
-// TODO(Task 10): turn a task into a lead (js/leads.js convertTaskToLead), the Board card's chart button
-export function convertTaskToLead(_taskId) {}
+// Turn a task into a lead (js/leads.js convertTaskToLead), the Board card's chart button. The lead
+// form lives in LeadFormProvider (mounted in the (app) layout), which registers itself here while it
+// is mounted; with no provider (a component rendered alone) the call is a no-op.
+let convertTaskToLeadHandler = null;
+export function registerConvertTaskToLead(fn) {
+  convertTaskToLeadHandler = fn;
+  return () => { if (convertTaskToLeadHandler === fn) convertTaskToLeadHandler = null; };
+}
+export function convertTaskToLead(taskId) {
+  convertTaskToLeadHandler?.(taskId);
+}

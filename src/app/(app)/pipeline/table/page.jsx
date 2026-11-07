@@ -1,8 +1,14 @@
-'use client';
+import { Suspense } from 'react';
+import PipelineTable from '@/features/pipeline/PipelineTable.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The table reads its filters and sort from the URL (useSearchParams), which needs a Suspense boundary so
+// the rest of the tree can still be prerendered.
 export default function Page() {
-  return <PagePlaceholder title="Pipeline: Table" />;
+  return (
+    <div className="twrap" style={{ height: 'calc(100% - 53px)', background: 'var(--bg)' }}>
+      <Suspense fallback={null}>
+        <PipelineTable />
+      </Suspense>
+    </div>
+  );
 }

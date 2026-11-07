@@ -1,8 +1,14 @@
-'use client';
+import { Suspense } from 'react';
+import PipelineBoard from '@/features/pipeline/PipelineBoard.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The Kanban reads its filters from the URL (useSearchParams), which needs a Suspense boundary so the
+// rest of the tree can still be prerendered.
 export default function Page() {
-  return <PagePlaceholder title="Pipeline: Board" />;
+  return (
+    <div className="twrap" style={{ height: 'calc(100% - 53px)', background: 'var(--bg)' }}>
+      <Suspense fallback={null}>
+        <PipelineBoard />
+      </Suspense>
+    </div>
+  );
 }

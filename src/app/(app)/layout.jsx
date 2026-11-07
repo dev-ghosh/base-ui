@@ -7,6 +7,7 @@ import { useAccess, useAccessMode } from '@/hooks/useAccess.js';
 import { useDataLoader } from '@/hooks/useDataLoader.js';
 import { useRealtime } from '@/hooks/useRealtime.js';
 import { useSession } from '@/hooks/useSession.js';
+import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
 import { TaskFormProvider } from '@/features/tasks/TaskFormProvider.jsx';
 import { resetAccess } from '@/lib/access.js';
 import { resolveLegacyUrl } from '@/lib/legacy-urls.js';
@@ -69,20 +70,22 @@ export default function AppLayout({ children, modal }) {
   if (!ready) return <Splash />;   // reading storage, waiting for access, or on the way to /login
 
   // TaskFormProvider holds the task form (#mo-tf) once for the whole shell: the header's
-  // New > Task, the task viewer's Edit and the lead screens all open it.
+  // New > Task, the task viewer's Edit and the lead screens all open it. LeadFormProvider does the same for the lead form (#mo-lf).
   return (
     <TaskFormProvider>
-      <div className="app" id="app">
-        <Splash />
-        <Sidebar session={session} />
-        <div className="main" id="main">
-          <Header session={session} onSignOut={signOut} />
-          <StatusBar />
-          <ReadOnlyBanner />
-          {children}
+      <LeadFormProvider>
+        <div className="app" id="app">
+          <Splash />
+          <Sidebar session={session} />
+          <div className="main" id="main">
+            <Header session={session} onSignOut={signOut} />
+            <StatusBar />
+            <ReadOnlyBanner />
+            {children}
+          </div>
+          {modal}
         </div>
-        {modal}
-      </div>
+      </LeadFormProvider>
     </TaskFormProvider>
   );
 }

@@ -1,9 +1,6 @@
-'use client';
+import { LeadViewModal } from '@/features/pipeline/LeadViewRoute.jsx';
 
-import { ModalPlaceholder } from '@/components/PagePlaceholder.jsx';
-
-// Placeholder for the record viewer shown over the page on a soft navigation to /pipeline/leads/[id].
-// A later task replaces it with the real viewer (the full-page twin renders on a direct visit).
+// The lead viewer (mo-ldet) over whatever page opened it; the real URL is /pipeline/leads/<id>.
 export default function Page() {
-  return <ModalPlaceholder title="Lead" />;
+  return <LeadViewModal />;
 }

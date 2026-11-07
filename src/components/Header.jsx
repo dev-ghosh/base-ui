@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
+import { useLeadForm } from '../features/pipeline/hooks/useLeadForm.js';
 import { useTaskForm } from '../features/tasks/hooks/useTaskForm.js';
 import { useTheme } from '../hooks/useTheme.js';
 import { identityOf } from '../lib/identity.js';
@@ -21,8 +22,6 @@ function syncNow() {}
 function openAlertsPanel() {}
 // TODO(Task 11): openAddContact()
 function openAddContact() {}
-// TODO(Task 10): openAddLead()
-function openAddLead() {}
 // TODO(Task 12): openAddEvent()
 function openAddEvent() {}
 // TODO(Task 11): exportToExcel() (lazy-loads SheetJS)
@@ -41,6 +40,7 @@ export default function Header({ session, onSignOut }) {
   const router = useRouter();
   const { access } = useAccess();
   const { openAdd: openAddTask } = useTaskForm();
+  const { openAdd: openAddLead } = useLeadForm();
   const { theme, setTheme } = useTheme();
   const { open: sideOpen } = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.getState, sidebarStore.getState);
   const [menu, setMenu] = useState(null);   // null | 'theme' | 'new' | 'user'
