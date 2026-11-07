@@ -100,7 +100,7 @@ Work-level controls that stay as search params / state, not routes:
 
 - Scope Mine / Team / Everyone (`SCOPES` in `scope.js`, stored in `rie_work_scope`): spec section 6 puts the scope control in `work/layout.jsx`. Whether scope is a search param (`?scope=`) or only stored state is **to confirm**. "Mine" is disabled when no owner code resolves.
 - Matrix filters (`mx` in `matrix.js`): statuses (`s`, `|`-separated), owner (`o`), priority (`p`), search (`q`), overdue only (`od=1`), needs review (`rv=1`). Legacy `#mx?` keys are exactly these short names.
-- Board/Hierarchy legacy filters: project (`tf-proj`), search (`tf-task`), category (`tf-cat`), assigned-to (multi), priority (multi), created (today, week, month, quarter, custom range), due (all, overdue, today, 3 days), tags.
+- Board/Hierarchy legacy filters: project (`tf-proj`), search (`tf-task`), category (`tf-cat`), assigned-to (multi), priority (multi), created (today, week, month, quarter, custom range), due (all, overdue, today, 3 days), tags. Search params (defined and documented in `src/features/work/board/params.js`): `pj` project, `q` search, `cat` category, `at` assigned-to (repeated; `__unassigned__` for nobody), `pr` priority (repeated; `none` for no priority), `due` (`overdue|today|3days`), `cr` created (`today|week|month|quarter|custom`) with `crf`/`crt` for the custom range, `tg` tags (repeated). Defaults are not written; unknown or stale values are ignored. Bulk mode and the Filters fold are component state.
 - Board "closed" rail open/closed (`rie_board_closed`): overlay-state.
 - Matrix drill slide-over (`mxDrill(company, func, kind)`, `mx.drill`): see next.
 
