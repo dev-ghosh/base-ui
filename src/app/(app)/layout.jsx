@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Header, ReadOnlyBanner, Sidebar, Splash, StatusBar } from '@/components';
-import { useAccess } from '@/hooks/useAccess.js';
+import { useAccess, useAccessMode } from '@/hooks/useAccess.js';
 import { useSession } from '@/hooks/useSession.js';
 import { resetAccess } from '@/lib/access.js';
 import { resolveLegacyUrl } from '@/lib/legacy-urls.js';
@@ -20,28 +20,33 @@ import { applyThemeColor } from '@/lib/theme.js';
  *    The root page forwards the query (`/?tab=work` -> `/today?tab=work`), so the app
  *    can land on any route with a legacy URL still in the address bar.
  *  - Access (`rie_my_access`) is requested once per sign-in and mirrored to <html> as
- *    `ro` / `is-admin` (useAccess).
+ *    `ro` / `is-admin` / `scoped` (useAccessMode). No chrome renders until it has
+ *    answered (or failed).
  */
 export default function AppLayout({ children, modal }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { status, session, signOut } = useSession();
-  useAccess();
+  const { loaded: accessLoaded } = useAccess();
+  useAccessMode();
   const legacyChecked = useRef(false);
 
-  // The splash covers the page until the session is known (and, once a later task loads
-  // data, until the data is in). Re-sync the status-bar colour with the theme the early
-  // script chose, as the old boot did through setTheme().
-  useEffect(() => {
-    showSplash('Initialising…');
-    applyThemeColor();
-  }, []);
+  // The splash covers the page until the session is known AND rie_my_access() has
+  // answered (or failed, which fails closed to read-only), as the old completeSignIn
+  // awaited loadMyAccess() before anything rendered: a viewer must never see a write
+  // control flash, nor a non-admin the Admin item. Once a later task loads data, the
+  // splash also waits for it.
+  useEffect(() => { showSplash('Initialising…'); }, []);
+
+  // Keep the status-bar colour in step with the theme the early script chose, on mount
+  // and on every route change (the old boot ran setTheme() and switchTab() re-ran it).
+  useEffect(() => { applyThemeColor(); }, [pathname]);
 
   useEffect(() => {
     if (status === 'signedOut') {
       resetAccess();                     // the next sign-in asks again; never reuse this user's rights
       router.replace('/login');
     } else if (status === 'signedIn') {
-      hideSplash();
       if (!legacyChecked.current) {
         legacyChecked.current = true;
         const target = resolveLegacyUrl(window.location.search, window.location.hash);
@@ -50,7 +55,10 @@ export default function AppLayout({ children, modal }) {
     }
   }, [status, router]);
 
-  if (status !== 'signedIn') return <Splash />;   // reading storage, or on the way to /login
+  const ready = status === 'signedIn' && accessLoaded;
+  useEffect(() => { if (ready) hideSplash(); }, [ready]);
+
+  if (!ready) return <Splash />;   // reading storage, waiting for access, or on the way to /login
 
   return (
     <div className="app" id="app">

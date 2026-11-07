@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from '@/hooks/useSession.js';
+import { resetAccess } from '@/lib/access.js';
 import { sendMagicLink } from '@/lib/auth.js';
 import { canScan } from '@/lib/devicepair.js';
 import { isIOS, isNativeShell, isStandalone } from '@/lib/platform.js';
@@ -36,7 +37,8 @@ export default function LoginForm() {
   // 'loading' is the server render and the first client render. Showing nothing
   // for that one tick avoids flashing the form at someone about to be redirected.
   if (status !== 'signedOut') return null;
-  return <SignInModal onSignedIn={() => router.replace('/today')} />;
+  // A fresh sign-in must ask rie_my_access again, never reuse a previous user's rights.
+  return <SignInModal onSignedIn={() => { resetAccess(); router.replace('/today'); }} />;
 }
 
 function SignInModal({ onSignedIn }) {

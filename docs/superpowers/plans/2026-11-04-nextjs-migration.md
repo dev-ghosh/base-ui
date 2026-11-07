@@ -192,7 +192,7 @@ Failure modes the spec implies that no feature task would otherwise test; each i
 ## Task 10: Pipeline (leads)
 
 **Files:**
-- Create: `src/features/pipeline/{PipelineBoard,PipelineTable,LeadForm,LeadViewer,TouchpointLog}.jsx`, `src/features/pipeline/hooks/{useLeads,useLeadActions}.js`, routes `src/app/(app)/pipeline/{layout,page}.jsx`, `pipeline/board/page.jsx`, `pipeline/table/page.jsx`, `pipeline/[id]/page.jsx`, `@modal/(.)pipeline/[id]/page.jsx`
+- Create: `src/features/pipeline/{PipelineBoard,PipelineTable,LeadForm,LeadViewer,TouchpointLog}.jsx`, `src/features/pipeline/hooks/{useLeads,useLeadActions}.js`, routes `src/app/(app)/pipeline/{layout,page}.jsx`, `pipeline/board/page.jsx`, `pipeline/table/page.jsx`, `pipeline/leads/[id]/page.jsx`, `@modal/(.)pipeline/leads/[id]/page.jsx`
 - Test: `tests/pipeline.test.jsx`
 
 **Interfaces:**
@@ -203,7 +203,7 @@ Failure modes the spec implies that no feature task would otherwise test; each i
 ## Task 11: Contacts
 
 **Files:**
-- Create: `src/features/contacts/*` (list, filters, pagination, bulk ops, form, dedup dialog, viewer, NL search, enrich, follow-up), `src/features/contacts/hooks/{useContacts,useContactFilters,useBulkSelection,useContactAi}.js`, routes `contacts/page.jsx`, `contacts/[id]/page.jsx`, `@modal/(.)contacts/[id]/page.jsx`
+- Create: `src/features/contacts/*` (list, filters, pagination, bulk ops, form, dedup dialog, viewer, NL search, enrich, follow-up), `src/features/contacts/hooks/{useContacts,useContactFilters,useBulkSelection,useContactAi}.js`, routes `contacts/page.jsx`, `contacts/people/[id]/page.jsx`, `@modal/(.)contacts/people/[id]/page.jsx`
 - Test: `tests/contacts.test.jsx`
 
 **Interfaces:**

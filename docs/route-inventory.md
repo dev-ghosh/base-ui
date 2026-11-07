@@ -135,14 +135,14 @@ default -> Work. In the new app these become links with search params.
 |---|---|---|---|
 | `/pipeline/board` | `state.leadView = 'kanban'` (default), `#lead-board`, toggle button "Table"/"Kanban" | sub-view | `toggleLeadView()` flips `kanban` <-> `table`. |
 | `/pipeline/table` | `state.leadView = 'table'`, `renderLeadTable` | sub-view | |
-| `/pipeline/[id]` | modal `mo-ldet`, `openLeadDetail(id)` in `leads.js` | record viewer | Intercepting route. Lead ids are numeric in the old markup (`openLeadDetail(${l.id})`); the route param is a string, so coerce. Contains a touchpoint timeline (`loadLeadTimeline`), links to the contact and to linked tasks. |
+| `/pipeline/leads/[id]` | modal `mo-ldet`, `openLeadDetail(id)` in `leads.js` | record viewer | Intercepting route. Lead ids are numeric in the old markup (`openLeadDetail(${l.id})`); the route param is a string, so coerce. Contains a touchpoint timeline (`loadLeadTimeline`), links to the contact and to linked tasks. |
 
 Search params: search (`lf-search`), type (`lf-type`: Investor, Grant, Tender, Govt/Official Pitch,
 Sales/BD, Award/Program, Other), owner (`lf-at`, filled from `public.people`), show closed
 (`state.leadShowClosed`, default false, button "Closed (n)" / "Hide closed": Won/Lost columns; it is a
-filter, so a search param, not a route). Note: `/pipeline/[id]` and the segments `board` and `table`
-share one path level, so `board` and `table` must be reserved (a lead id cannot be `board`; ids are
-numeric so there is no clash in practice).
+filter, so a search param, not a route). Note: the lead viewer lives under its own segment,
+`/pipeline/leads/[id]`, not at `/pipeline/[id]`, so that its interception rewrite cannot shadow the static
+siblings `board` and `table` (ruling 12.10).
 
 Forms (component state): `mo-lf` (Add/Edit lead), `openAddTaskForLead` (task form prefilled from a lead).
 
@@ -152,7 +152,7 @@ Forms (component state): `mo-lf` (Add/Edit lead), `openAddTaskForLead` (task for
 |---|---|---|---|
 | `/contacts` | `tab-contacts`; default `state.contactView = 'table'` | page | Default view is the table (`#ctbl-wrap`). |
 | `/contacts/cards`, `/contacts/table` **(proposed)** | `setContactView('card' \| 'table')`, buttons `#vt-card`, `#vt-table` (`.view-toggle`) | sub-view | In-page toggle in the old app, so C7(b) makes it segments. Spec section 6 lists only `contacts/page.jsx` + `[id]/page.jsx`. Segment names and whether `/contacts` redirects to `table` are **to confirm**. |
-| `/contacts/[id]` | modal `mo-det`, `openContact(id)` in `contacts.js` | record viewer | Intercepting route. Contact ids are numeric in the old markup. Contains history (`getContactHistory`) and AI actions. |
+| `/contacts/people/[id]` | modal `mo-det`, `openContact(id)` in `contacts.js` | record viewer | Intercepting route. Contact ids are numeric in the old markup. Contains history (`getContactHistory`) and AI actions. |
 | `/events` | `tab-events`, `#ev-grid` | page | No view toggle exists in `events.js` (searched for view/toggle; none found). |
 | `/events/[id]` | modal `mo-edet`, `openEventDetail(id)` in `events.js` | record viewer | Intercepting route. Event ids are numeric. Contains guests, RSVP sync and invite flows (edge functions). |
 
@@ -205,8 +205,8 @@ named in the plan are routes in sections 3-6. The rest:
 | Identifier | Opened by | Kind | Notes |
 |---|---|---|---|
 | `mo-tv` | `openTaskView(id)` | record viewer | Route `/work/tasks/[id]` (section 3). |
-| `mo-det` | `openContact(id)` | record viewer | Route `/contacts/[id]`. |
-| `mo-ldet` | `openLeadDetail(id)` | record viewer | Route `/pipeline/[id]`. |
+| `mo-det` | `openContact(id)` | record viewer | Route `/contacts/people/[id]`. |
+| `mo-ldet` | `openLeadDetail(id)` | record viewer | Route `/pipeline/leads/[id]`. |
 | `mo-edet` | `openEventDetail(id)` | record viewer | Route `/events/[id]`. |
 | `mo-entity-det` | `openInitiativeDrill(entityId)` | record viewer | Route `/work/initiatives/[id]` (proposed, section 3). |
 | `mo-triage`, `mo-classify` | `openTriage()`, `openClassify()` | overlay-route | `/today/triage`, `/today/classify` (section 4). |
@@ -264,9 +264,9 @@ Spec section 6 routes, then proposed additions.
 /pipeline                   -> /pipeline/board
 /pipeline/board
 /pipeline/table
-/pipeline/[id]              intercepted (mo-ldet)
+/pipeline/leads/[id]        intercepted (mo-ldet)
 /contacts
-/contacts/[id]              intercepted (mo-det)
+/contacts/people/[id]       intercepted (mo-det)
 /events
 /events/[id]                intercepted (mo-edet)
 /escalations
@@ -315,3 +315,8 @@ These settle every item marked "to confirm" above. Spec C7 is the authority; eac
    `mo-smart-search`, alerts panel and tour stay overlay-state.
 9. Line endings: this machine converts LF to CRLF; byte-exact CSS copies must be compared with line endings
    normalised to LF.
+10. **Viewers for pipeline and contacts live under `/pipeline/leads/[id]` and `/contacts/people/[id]`** to avoid
+    interception rewrites shadowing static siblings (Next registers each interception as a rewrite with source
+    `/pipeline/:id`, which would also match `/pipeline/board`). Events (`/events/[id]`, no static siblings),
+    `/work/tasks/[id]` and `/work/initiatives/[id]` keep their paths. Each has its intercepting twin
+    `@modal/(.)pipeline/leads/[id]` and `@modal/(.)contacts/people/[id]`.

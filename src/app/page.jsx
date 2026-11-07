@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { decodeSession, getSession, parseAuthCallback, scheduleAutoRefresh } from '@/lib/auth.js';
 import { claimPairing, takePairFromUrl } from '@/lib/devicepair.js';
+import { resetAccess } from '@/lib/access.js';
 import { looksLikeAccessToken } from '@/lib/signin-callback.js';
 
 // The site root is the ONLY place that handles what a sign-in leaves in the URL
@@ -29,7 +30,11 @@ export default function RootPage() {
     if (started.current) return;
     started.current = true;
 
-    const landing = '/today' + window.location.search;   // keeps a legacy ?tab= for the shell to resolve
+    // Keeps a legacy ?tab= and a legacy #mx? matrix hash for the (app) layout to resolve
+    // (old bookmarks are /#mx?s=...; the hash would otherwise die here). Other hashes are
+    // consumed below (#pair, #access_token) or ignored.
+    const mxHash = /^#mx(\?|$)/.test(window.location.hash) ? window.location.hash : '';
+    const landing = '/today' + window.location.search + mxHash;
 
     async function run() {
       // 1. QR pairing
@@ -37,6 +42,7 @@ export default function RootPage() {
       if (pairCode) {
         try {
           await claimPairing(pairCode);          // stores rie_session, arms the refresh timer
+          resetAccess();                         // a new sign-in: never reuse a previous user's rights
           router.replace(landing);
         } catch {
           // Stale or already-used code: say why on the sign-in screen instead of
@@ -55,6 +61,7 @@ export default function RootPage() {
           window.history.replaceState(null, '', url);
           if (session) {
             scheduleAutoRefresh();
+            resetAccess();
             router.replace(landing);
             return;
           }

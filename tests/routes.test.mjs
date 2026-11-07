@@ -1,7 +1,7 @@
 // Every route in docs/route-inventory.md (section 11 + the section 12 rulings) has a
 // page, every record viewer has its intercepting @modal twin, and every sidebar link
 // points at one of those routes.
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { NAV_SECTIONS, FOOT_ITEMS, PROFILE_ITEM, ADMIN_ITEM, NAV_KEYS, navKeyForPath, titleForPath } from '../src/lib/nav.js';
@@ -54,6 +54,16 @@ for (const r of routes) {
   if (!r.endsWith('/[id]')) continue;
   check(existsSync(modalFile(r)), `intercepting @modal page for ${r}`);
 }
+// Ruling 12.10: Next registers each interception as a rewrite on `/<parent>/:id` with no static
+// exclusion, so an [id] viewer must not share a level with static sibling segments.
+for (const r of routes) {
+  if (!r.endsWith('/[id]')) continue;
+  const parent = join(appDir, ...r.split('/').filter(Boolean).slice(0, -1));
+  const siblings = existsSync(parent) ? readdirSync(parent, { withFileTypes: true }).filter((d) => d.isDirectory() && d.name !== '[id]') : [];
+  check(siblings.length === 0, `${r} has no static sibling segments`);
+}
+check(routes.has('/pipeline/leads/[id]') && routes.has('/contacts/people/[id]'), 'pipeline and contacts viewers live under /pipeline/leads and /contacts/people');
+check(!routes.has('/pipeline/[id]') && !routes.has('/contacts/[id]'), 'no /pipeline/[id] or /contacts/[id]');
 check(existsSync(join(appDir, '@modal', 'default.jsx')), '@modal/default.jsx');
 check(existsSync(join(appDir, 'layout.jsx')), '(app)/layout.jsx');
 check(!existsSync(join(appDir, 'page.jsx')), 'no (app)/page.jsx (would collide with the root page)');
@@ -76,6 +86,8 @@ const navCases = {
   '/work/decide/system': ['tasks', 'Work'],      // so does decide
   '/work/tasks/abc': ['tasks', 'Work'],
   '/pipeline/board': ['leads', 'Pipeline'],
+  '/pipeline/leads/5': ['leads', 'Pipeline'],
+  '/contacts/people/7': ['contacts', 'Contacts'],
   '/escalations/open': ['escalations', 'Escalations'],
   '/analytics/people': ['analytics', 'Analytics'],
   '/expenses': ['expenses', 'Expenses'],

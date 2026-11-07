@@ -164,15 +164,73 @@ describe('access mode (C15)', () => {
     expect(document.getElementById('ro-bar')).toBeNull();
   });
 
-  it('does not mark the page read-only before the answer arrives', async () => {
-    let release;
-    vi.stubGlobal('fetch', vi.fn(() => new Promise((res) => { release = () => res({ ok: true, status: 200, json: async () => [{ can_write: true }], text: async () => '' }); })));
-    signIn();
-    mount();
-    await waitFor(() => expect(fetch).toHaveBeenCalled());
+  describe('nothing is revealed until access is known', () => {
+    const splash = () => document.getElementById('splash');
+    const noChrome = () => {
+      expect(document.getElementById('side')).toBeNull();
+      expect(document.querySelector('header.topbar')).toBeNull();
+      expect(document.querySelector('.sbar')).toBeNull();
+      expect(document.getElementById('new-btn')).toBeNull();
+      expect(screen.queryByTestId('page')).toBeNull();
+      expect(screen.queryByTestId('modal-slot')).toBeNull();
+    };
+
+    it('keeps the splash up and renders no chrome while rie_my_access is pending, then reveals a read-only shell', async () => {
+      let release;
+      vi.stubGlobal('fetch', vi.fn(() => new Promise((res) => {
+        release = () => res({ ok: true, status: 200, json: async () => [{ can_write: false, role: 'viewer' }], text: async () => '' });
+      })));
+      signIn();
+      mount();
+      await waitFor(() => expect(fetch).toHaveBeenCalled());
+      await waitFor(() => expect(nav.router.replace).not.toHaveBeenCalled());
+      expect(splash()).not.toBeNull();
+      expect(splash().classList.contains('hide')).toBe(false);
+      noChrome();
+      expect(html.classList.contains('ro')).toBe(false);
+      release();
+      await waitFor(() => expect(document.getElementById('side')).not.toBeNull());
+      expect(html.classList.contains('ro')).toBe(true);      // already read-only on the first frame of the chrome
+      expect(document.getElementById('new-btn')).not.toBeNull();
+      expect(screen.getByTestId('page')).toBeTruthy();
+      await waitFor(() => expect(splash().classList.contains('hide')).toBe(true));
+    });
+
+    it('also ends loading when rie_my_access fails (fail closed: ro, splash hidden)', async () => {
+      let release;
+      vi.stubGlobal('fetch', vi.fn(() => new Promise((res) => {
+        release = () => res({ ok: false, status: 500, text: async () => 'boom', json: async () => ({}) });
+      })));
+      signIn();
+      mount();
+      await waitFor(() => expect(fetch).toHaveBeenCalled());
+      noChrome();
+      release();
+      await waitFor(() => expect(document.getElementById('side')).not.toBeNull());
+      expect(html.classList.contains('ro')).toBe(true);
+      expect(document.getElementById('ro-bar')).toBeNull();
+      await waitFor(() => expect(splash().classList.contains('hide')).toBe(true));
+    });
+
+    it('does not reveal a signed-in shell on a stale answer from the previous user', async () => {
+      store.setState({ access: { can_write: true, is_admin: true }, accessLoaded: true });
+      resetAccess();                      // what sign-in / sign-out do
+      stubBackend({ access: { can_write: false } });
+      signIn();
+      mount();
+      noChrome();
+      await waitFor(() => expect(document.getElementById('side')).not.toBeNull());
+      expect(html.classList.contains('is-admin')).toBe(false);
+    });
+  });
+
+  it('removes the access classes from <html> when the shell unmounts', async () => {
+    await mountReady({ can_write: false, is_admin: true, task_scope: 'assigned' });
+    await waitFor(() => expect(html.classList.contains('ro')).toBe(true));
+    cleanup();
     expect(html.classList.contains('ro')).toBe(false);
-    release();
-    await waitFor(() => expect(store.getState().accessLoaded).toBe(true));
+    expect(html.classList.contains('is-admin')).toBe(false);
+    expect(html.classList.contains('scoped')).toBe(false);
   });
 
   it('calls rie_my_access once per sign-in, however many components read it', async () => {
@@ -408,6 +466,21 @@ describe('theme', () => {
     expect(document.contains(meta)).toBe(true);
     expect(meta.getAttribute('content')).toBe('#FAF9F5');
     expect(meta.hasAttribute('media')).toBe(false);   // pinned: the in-app choice beats the OS scheme
+  });
+});
+
+describe('theme-color on navigation', () => {
+  it('re-applies the status-bar colour when the route changes', async () => {
+    stubBackend({ access: { can_write: true } });
+    signIn();
+    const view = mount();
+    await waitFor(() => expect(document.getElementById('side')).not.toBeNull());
+    const meta = document.querySelector('meta[name="theme-color"]');
+    expect(meta.getAttribute('content')).toBe('#262624');
+    meta.setAttribute('content', '#123456');            // something drifted it
+    nav.path = '/work/matrix';
+    view.rerender(<AppLayout modal={<div data-testid="modal-slot" />}><div data-testid="page">page</div></AppLayout>);
+    await waitFor(() => expect(meta.getAttribute('content')).toBe('#262624'));
   });
 });
 
