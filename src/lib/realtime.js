@@ -137,7 +137,7 @@ function connect() {
     reconnectTimer = setTimeout(() => { reconnectDelay = Math.min(reconnectDelay * 2, 30000); connect(); }, reconnectDelay);
   };
 
-  socket.onerror = () => socket.close();
+  socket.onerror = () => socket?.close();
 }
 
 export function initRealtime(onChange) {
@@ -149,5 +149,11 @@ export function destroyRealtime() {
   clearTimeout(reconnectTimer);
   hasConnected = false;
   lastToken = null;
-  if (socket) { socket.onclose = null; socket.close(); socket = null; }
+  if (socket) {
+    // Detach every handler first: a connect attempt that fails after the shell has gone
+    // delivers an error event, and onerror would call close() on the null we leave below.
+    socket.onopen = socket.onmessage = socket.onclose = socket.onerror = null;
+    socket.close();
+    socket = null;
+  }
 }

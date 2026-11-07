@@ -187,6 +187,9 @@ ws.onopen(); // second open on the same wrapper = reconnect
 check(events[2] && events[2].type === 'resync', 'reconnect calls onChange({type:"resync"})');
 rt.destroyRealtime();
 check(ws.readyState === 3, 'destroyRealtime closes the socket');
+let lateThrew = false;
+try { ws.onerror?.(); ws.onclose?.(); } catch { lateThrew = true; }
+check(!lateThrew, 'a socket error arriving after destroyRealtime is ignored, not a crash');
 
 if (bad) { console.error(`${bad} check(s) failed`); process.exit(1); }
 process.exit(0);

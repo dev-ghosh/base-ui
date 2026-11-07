@@ -61,6 +61,11 @@ export function createInitialState() {
     decisions: [], // decision_queue WHERE status='pending'
     cleanups: [], // cleanup_queue WHERE status='pending'
 
+    // entity_events audit rows (newest 60), filled by loadData
+    entityEvents: [],
+    // escalations rows. Filled by the escalations loader; realtime folds single rows into it.
+    escalations: [],
+
     // leads tab data (pipeline of applications & ongoing conversations)
     leads: [],
 
