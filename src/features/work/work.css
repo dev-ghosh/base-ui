@@ -31,3 +31,51 @@
     text-align: center;
   }
 }
+
+/* ── Board and Hierarchy ──────────────────────────────────────────────────────
+ * Extras the old stylesheet did not need (it built these rows with inline mouseover handlers).
+ * globals.css stays a verbatim copy of the old CSS. */
+
+/* A row of the assigned-to / priority checkbox lists: the old inline onmouseover highlight. */
+.tf-opt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .75rem;
+  transition: background .1s;
+}
+
+.tf-opt:hover,
+.cr-opt:hover {
+  background: var(--sf2);
+}
+
+/* Bulk mode is a write path: a view-only user does not get its button (the rest of the write
+ * controls are hidden by `html.ro` in the old CSS). */
+html.ro .tf-bulk {
+  display: none !important;
+}
+
+/* The tick box shown on a card / row while bulk mode is on. */
+.kb-sel {
+  accent-color: var(--ac);
+  width: 14px;
+  height: 14px;
+  margin: 0 6px 0 0;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.kb-card .kb-sel {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  margin: 0;
+}
+
+.kb-card.kb-sel-on {
+  border-color: var(--ac);
+}

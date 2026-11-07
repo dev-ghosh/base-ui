@@ -6,3 +6,4 @@ export { default as ReadOnlyBanner } from './ReadOnlyBanner.jsx';
 export { default as Modal } from './Modal.jsx';
 export { Icon, ICONS } from './Icon.jsx';
 export { useModal } from '../hooks/useModal.js';
+export { default as TagFilterBar } from './TagFilterBar.jsx';
