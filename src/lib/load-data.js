@@ -89,6 +89,7 @@ export async function loadData() {
       actions: actionRows.map(rowToEntity),
       entityLinks: linkRows.map((r) => ({ parentId: r.parent_id, childId: r.child_id })),
       entityEvents: (auditRows || []).map(rowToEntityEvent),
+      dataLoaded: true,
     });
     writeCache();
     // The status bar says only what a status bar is for: is this connected, and
@@ -106,9 +107,11 @@ export async function loadData() {
       const restored = {};
       for (const k of CACHED_LISTS) restored[k] = cache[k] || [];
       restored.people = cache.people || store.getState().people || [];
+      restored.dataLoaded = true;
       store.setState(restored);
       setStatus('online', `Showing cached data (${cacheAgeMinutes(cache)}m ago)`);
     } else {
+      store.setState({ dataLoaded: true });   // nothing arrived and nothing is cached: the lists really are empty
       setStatus('error', 'Could not load data: ' + (e?.message || e));
     }
     return false;   // cache or nothing: not a successful sync

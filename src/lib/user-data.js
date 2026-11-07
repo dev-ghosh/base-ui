@@ -13,7 +13,7 @@ let generation = 0;
 const DATA_KEYS = [
   'contacts', 'events', 'guests', 'tasks', 'workstreams', 'actions', 'entityLinks',
   'entities', 'fronts', 'people', 'coOwners', 'initiatives', 'candidates', 'decisions',
-  'cleanups', 'leads', 'entityEvents', 'escalations',
+  'cleanups', 'leads', 'entityEvents', 'escalations', 'dataLoaded',
 ];
 
 /** Identify the load that is starting now: this sign-in, this person. */

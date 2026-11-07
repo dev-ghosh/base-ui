@@ -76,6 +76,10 @@ export function createInitialState() {
     // true once rie_my_access() has answered (or failed): the difference between "not known yet"
     // (access null, nothing set on <html>) and "known to be read-only" (access null, class ro).
     accessLoaded: false,
+    // true once a load has ended (fresh, from the offline cache, or failed): the difference between
+    // "the lists are still empty because nothing has arrived yet" and "there really is nothing".
+    // A direct visit to /work/tasks/<id> shows "Loading…" until then instead of "not found".
+    dataLoaded: false,
     currentUser: null,
     session: null,
   };
