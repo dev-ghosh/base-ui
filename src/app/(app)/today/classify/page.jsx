@@ -1,8 +1,7 @@
-'use client';
+import { ClassifyPageRoute } from '@/features/classify/ClassifyRoute.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// Direct visit (or refresh) of /today/classify. A soft navigation from Today is intercepted by
+// @modal/(.)today/classify instead.
 export default function Page() {
-  return <PagePlaceholder title="Classify" />;
+  return <ClassifyPageRoute />;
 }

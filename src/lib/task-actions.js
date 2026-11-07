@@ -27,7 +27,7 @@ const sameId = (a, b) => a != null && b != null && String(a) === String(b);
 const findTask = (id) => store.getState().tasks.find((t) => sameId(t.id, id)) || null;
 
 /** Replace fields on one task (new object, new array). */
-function patchLocal(id, fields) {
+export function patchTaskLocal(id, fields) {
   store.setState((s) => ({ tasks: s.tasks.map((t) => (sameId(t.id, id) ? { ...t, ...fields } : t)) }));
 }
 
@@ -52,14 +52,14 @@ export async function writeTaskPatch(id, patch, { optimistic = true, okMsg, fail
   const t = findTask(id);
   if (optimistic && !t) return false;
   const before = t ? { status: t.status, nextFollowUp: t.nextFollowUp } : null;
-  if (optimistic) patchLocal(id, localFields(patch));
+  if (optimistic) patchTaskLocal(id, localFields(patch));
   try {
     await sbUpdate('entities', id, patch);
-    if (!optimistic) patchLocal(id, localFields(patch));
+    if (!optimistic) patchTaskLocal(id, localFields(patch));
     if (okMsg) setStatus('online', okMsg);
     return true;
   } catch (e) {
-    if (optimistic) patchLocal(id, before);
+    if (optimistic) patchTaskLocal(id, before);
     setStatus('error', failMsg ? failMsg(e) : `Could not update that task: ${e.message}`);
     return false;
   }
@@ -82,14 +82,14 @@ export async function setTaskStatus(id, newStatus) {
   const t = findTask(id);
   if (!t || t.status === newStatus) return false;
   const prev = t.status;
-  patchLocal(t.id, { status: newStatus });
+  patchTaskLocal(t.id, { status: newStatus });
   setStatus('syncing', 'Updating status…');
   try {
     const v3 = DISPLAY_TO_V3[newStatus] || newStatus;
     await sbUpdate('entities', t.id, {
       status: v3, updated_by: store.getState().currentUser || 'unknown', updated_at: new Date().toISOString(),
     });
-    patchLocal(t.id, { v3Status: v3 });
+    patchTaskLocal(t.id, { v3Status: v3 });
     setStatus('online', `Moved to ${newStatus}`);
     writeEntityEvent(t.id, 'status_changed', {
       fieldName: 'status', oldValue: prev, newValue: newStatus, notes: 'Hierarchy',
@@ -98,7 +98,7 @@ export async function setTaskStatus(id, newStatus) {
       store.getState().currentUser || t.assignedTo || 'Team Member', 'task');
     return true;
   } catch (e) {
-    patchLocal(t.id, { status: prev });
+    patchTaskLocal(t.id, { status: prev });
     setStatus('error', 'Update failed: ' + e.message);
     return false;
   }
@@ -205,7 +205,7 @@ export async function saveTask(data) {
       await syncCoOwners(savedId, data.ownerCode, data.coOwnerCodes);
       if (prev) {
         const v3 = DISPLAY_TO_V3[data.status] || 'pending';
-        patchLocal(savedId, {
+        patchTaskLocal(savedId, {
           task: data.task, project: data.project, frontCode: data.frontCode || '', category: data.category,
           status: data.status, v3Status: v3, priority: data.priority, nextFollowUp: data.nextFollowUp,
           lastMtg: data.lastMtg, startDate: data.startDate, endDate: data.endDate,

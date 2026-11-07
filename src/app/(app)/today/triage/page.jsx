@@ -1,8 +1,8 @@
-'use client';
+import { Suspense } from 'react';
+import { TriagePageRoute } from '@/features/triage/TriageRoute.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// Direct visit (or refresh) of /today/triage. A soft navigation from Today is intercepted by
+// @modal/(.)today/triage instead.
 export default function Page() {
-  return <PagePlaceholder title="Triage" />;
+  return <Suspense fallback={null}><TriagePageRoute /></Suspense>;
 }
