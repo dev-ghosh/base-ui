@@ -139,6 +139,52 @@ describe('setStatus (the viewer\'s Mark done / Reopen, hSetStatus)', () => {
   });
 });
 
+describe('setStatus options (drag-drop on the Board) and the writes added for Board / Hierarchy', () => {
+  const parent = { id: 'w1', task: 'WS', status: 'Pending', v3Status: 'pending' };
+  const seedKid = () => seed({
+    tasks: [makeTask({ id: 't1' })], workstreams: [parent], entityLinks: [{ parentId: 'w1', childId: 't1' }],
+  });
+  const patchUrls = (f) => f.writes().filter((w) => w.method === 'PATCH').map((w) => w.url.split('?id=eq.')[1]);
+
+  it('by default only the task is written (the viewer never rolled the parent up)', async () => {
+    seedKid();
+    const f = stubFetch();
+    await actions().setStatus('t1', 'In Progress');
+    expect(patchUrls(f)).toEqual(['t1']);
+  });
+
+  it('rollUp also re-computes the parent workstream; notes label the audit row', async () => {
+    seedKid();
+    const f = stubFetch();
+    await actions().setStatus('t1', 'In Progress', { notes: 'Kanban drag-drop', rollUp: true });
+    expect(patchUrls(f)).toEqual(['t1', 'w1']);
+    expect(f.writes().find((w) => w.url.includes('/entity_events')).body.notes).toBe('Kanban drag-drop');
+    expect(store.getState().workstreams[0]).toMatchObject({ status: 'In Progress', v3Status: 'in_progress' });
+  });
+
+  it('reassign PATCHes owner_code only and moves the display name; a failure puts both back', async () => {
+    seed({ tasks: [makeTask({ id: 't1' })] });
+    const f = stubFetch();
+    expect(await actions().reassign('t1', 'OT1')).toBe(true);
+    expect(f.writes()[0]).toMatchObject({ method: 'PATCH', body: { owner_code: 'OT1' } });
+    expect(task('t1')).toMatchObject({ ownerCode: 'OT1', assignedTo: 'Olive Other' });
+
+    stubFetch(async () => failResponse('fk'));
+    expect(await actions().reassign('t1', ME)).toBe(false);
+    expect(task('t1')).toMatchObject({ ownerCode: 'OT1', assignedTo: 'Olive Other' });
+    expect(getStatus().msg).toMatch(/^Reassign failed: /);
+  });
+
+  it('reassign by a viewer is refused before any request', async () => {
+    seed({ tasks: [makeTask({ id: 't1' })], access: { person_code: ME, can_write: false } });
+    const f = stubFetch();
+    expect(await actions().reassign('t1', 'OT1')).toBe(false);
+    expect(f.fn).not.toHaveBeenCalled();
+    expect(task('t1').ownerCode).toBe(ME);
+    expect(getStatus().msg).toContain(READ_ONLY);
+  });
+});
+
 describe('saveTask', () => {
   const data = (o = {}) => ({
     id: null, leadId: null, task: 'New thing', project: '', frontCode: null, category: '', status: 'Pending',

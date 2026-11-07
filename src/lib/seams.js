@@ -12,3 +12,6 @@ export function recordActivity(_action, _target, _person, _type = 'task') {}
 
 // TODO(Task 13): the Escalate dialog (js/escalations.js openEscalateModal)
 export function openEscalateModal(_taskId) {}
+
+// TODO(Task 10): turn a task into a lead (js/leads.js convertTaskToLead), the Board card's chart button
+export function convertTaskToLead(_taskId) {}

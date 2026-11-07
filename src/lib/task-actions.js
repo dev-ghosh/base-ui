@@ -16,7 +16,7 @@
 import { store } from '../store/store.js';
 import { sbInsert, sbUpdate, sbDelete, sbPatchWhere } from './rest.js';
 import { setStatus } from './status.js';
-import { DISPLAY_TO_V3, V3_TO_DISPLAY, entityToRow, rowToEntity } from './mappers.js';
+import { DISPLAY_TO_V3, V3_TO_DISPLAY, entityToRow, rowToEntity, personName } from './mappers.js';
 import { addDaysISO, nextMondayISO } from './today.js';
 import { registryReady } from './registry.js';
 import { validateTask } from './task-form.js';
@@ -77,8 +77,14 @@ export const pushWeek = (id) =>
 export const pushDays = (id, n) =>
   writeTaskPatch(id, { next_follow_up: addDaysISO(n) }, { okMsg: n === 1 ? 'Pushed to tomorrow' : `Pushed ${n} days` });
 
-/** Change a task's status from the viewer (hSetStatus): same write the Board's drag performs. */
-export async function setTaskStatus(id, newStatus) {
+/**
+ * Change a task's status. The viewer / Hierarchy rows (hSetStatus) and the Board's drag-and-drop
+ * (kbDrop) are the same write: optimistic, then PATCH entities, rolled back with an error status.
+ * Options: `notes` is what the audit event says ('Hierarchy' by default; the Board passes
+ * 'Kanban drag-drop'); `rollUp` also re-computes the parent workstream's status afterwards (kbDrop did).
+ * @returns {Promise<boolean>} true when the write landed
+ */
+export async function setTaskStatus(id, newStatus, { notes = 'Hierarchy', rollUp = false } = {}) {
   const t = findTask(id);
   if (!t || t.status === newStatus) return false;
   const prev = t.status;
@@ -92,14 +98,37 @@ export async function setTaskStatus(id, newStatus) {
     patchTaskLocal(t.id, { v3Status: v3 });
     setStatus('online', `Moved to ${newStatus}`);
     writeEntityEvent(t.id, 'status_changed', {
-      fieldName: 'status', oldValue: prev, newValue: newStatus, notes: 'Hierarchy',
+      fieldName: 'status', oldValue: prev, newValue: newStatus, notes,
     }).catch(() => {});
     recordActivity(newStatus === 'Completed' ? 'marked completed' : `moved to ${newStatus}`, t.task,
       store.getState().currentUser || t.assignedTo || 'Team Member', 'task');
+    if (rollUp) await syncParentStatus(t.id);
     return true;
   } catch (e) {
     patchTaskLocal(t.id, { status: prev });
     setStatus('error', 'Update failed: ' + e.message);
+    return false;
+  }
+}
+
+/**
+ * Hand a task to another person (bulk Reassign, batchReassign in js/bulk-ops.js): PATCH owner_code
+ * only, as the old code did. Optimistic like the other task writes (the old code reloaded everything
+ * afterwards); rolled back on failure. Co-owners are not touched.
+ * @returns {Promise<boolean>} true when the write landed
+ */
+export async function reassignTask(id, personCode) {
+  const t = findTask(id);
+  if (!t) return false;
+  const before = { ownerCode: t.ownerCode, assignedTo: t.assignedTo };
+  const names = [personCode, ...(t.coOwnerCodes || [])].filter(Boolean).map(personName);
+  patchTaskLocal(t.id, { ownerCode: personCode, assignedTo: names.join(', ') });
+  try {
+    await sbUpdate('entities', t.id, { owner_code: personCode });
+    return true;
+  } catch (e) {
+    patchTaskLocal(t.id, before);
+    setStatus('error', 'Reassign failed: ' + e.message);
     return false;
   }
 }
@@ -281,5 +310,46 @@ export async function deleteTask(id) {
   return true;
 }
 
+/* ── workstreams (Hierarchy group headers) ───────────────────────────────── */
+
+/** Push On Hold / Dropped down to every unfinished descendant (cascadeStatusDown in js/tasks.js). */
+async function cascadeStatusDown(parentEntityId, newV3Status) {
+  const s = store.getState();
+  const all = [...s.tasks, ...s.actions];
+  for (const link of s.entityLinks.filter((l) => sameId(l.parentId, parentEntityId))) {
+    const child = all.find((e) => sameId(e.id, link.childId));
+    if (!child || child.v3Status === 'completed') continue;
+    try {
+      await sbUpdate('entities', child.id, { status: newV3Status, updated_by: store.getState().currentUser || 'RIE-Auto' });
+      patchEntityLocal(child.id, { v3Status: newV3Status, status: V3_TO_DISPLAY[newV3Status] || 'Pending' });
+    } catch { /* continue with siblings */ }
+    await cascadeStatusDown(child.id, newV3Status);
+  }
+}
+
+/**
+ * Change a workstream's status from its Hierarchy header (changeWorkstreamStatus). Not optimistic,
+ * as before: the write first, then memory; On Hold and Dropped cascade to the children.
+ * @returns {Promise<boolean>}
+ */
+export async function setWorkstreamStatus(wsId, displayStatus) {
+  const ws = store.getState().workstreams.find((w) => sameId(w.id, wsId));
+  if (!ws) return false;
+  const v3 = DISPLAY_TO_V3[displayStatus] || 'pending';
+  setStatus('syncing', `Setting workstream to ${displayStatus}…`);
+  try {
+    await sbUpdate('entities', wsId, { status: v3, updated_by: store.getState().currentUser || 'RIE-Auto' });
+    patchEntityLocal(wsId, { v3Status: v3, status: displayStatus });
+    if (v3 === 'on_hold' || v3 === 'dropped') await cascadeStatusDown(wsId, v3);
+    setStatus('online', `Workstream set to ${displayStatus}`);
+    return true;
+  } catch (e) {
+    setStatus('error', 'Status update failed: ' + e.message);
+    return false;
+  }
+}
+
 /** The actions as one stable object (useTaskActions returns it). */
-export const taskActions = { markDone, pushWeek, pushDays, setStatus: setTaskStatus, saveTask, deleteTask };
+export const taskActions = {
+  markDone, pushWeek, pushDays, setStatus: setTaskStatus, reassign: reassignTask, setWorkstreamStatus, saveTask, deleteTask,
+};
