@@ -7,9 +7,9 @@ import {
 import { CompositionBar } from './MatrixGrid.jsx';
 import { fmtD } from '../../../lib/format.js';
 
-// Colour rule for the whole Work tab: red only on a task that is P1, overdue AND mine; overdue
-// alone is amber. One tone for the badge, one for the date.
-const tone = (model, t) => (model.isFire(t) ? 'crit' : 'warn');
+// NOTE for the owner: the drill (badges, list dates, pivot risk), its header and the tooltip keep the
+// OLD colours (red for any overdue, red P1 badge): they do not follow the Work-tab colour rule
+// (red only for a P1 that is overdue and mine). Only the grid cell risk line does, as in the old code.
 const ownerLabel = (t) => (t.assignedTo || '').trim();
 
 /* ── Kanban ─────────────────────────────────────────────────────────────── */
@@ -28,8 +28,8 @@ function KbCard({ model, t, drill, open, onToggle, onDragStart, onDragEnd, dragg
     >
       <div className="mx-card-t">{t.task}</div>
       <div className="mx-card-m">
-        {t.priority ? <span className={`mx-badge ${t.priority === 'P1' ? tone(model, t) : 'warn'}`}>{t.priority}</span> : null}
-        {overdue ? <span className={`mx-badge ${tone(model, t)}`}>overdue</span> : null}
+        {t.priority ? <span className={`mx-badge ${t.priority === 'P1' ? 'crit' : 'warn'}`}>{t.priority}</span> : null}
+        {overdue ? <span className="mx-badge crit">overdue</span> : null}
         <span className="mx-id">#{String(t.id)}</span>
         {!drill.company && t.company ? <span className="mx-meta">{t.company}</span> : null}
         {!drill.func && t.func ? <span className="mx-meta">{t.func}</span> : null}
@@ -150,7 +150,7 @@ function List({ model, rows, sort, onSort, actions }) {
           // global function list (spec 7.7).
           const opts = t.company ? model.activeFuncsFor(t.company) : [];
           const sub = [t.contactName, t.contactOrg].filter(Boolean).join(' / ');
-          const dueCls = !model.isOverdue(t) ? 'mx-due' : model.isFire(t) ? 'mx-due-od' : 'mx-due-warm';
+          const dueCls = model.isOverdue(t) ? 'mx-due-od' : 'mx-due';
           return (
             <tr key={t.id}>
               <td className="mx-id">#{String(t.id)}</td>
@@ -210,7 +210,7 @@ function Pivot({ model, rows, axis, theme }) {
               <td className="mx-pv-r">
                 {od || p1 ? (
                   <>
-                    {od ? <span className={items.some(model.isFire) ? 'crit' : 'warn'}>{od} overdue</span> : null}
+                    {od ? <span className="crit">{od} overdue</span> : null}
                     {p1 ? <span className="warn">{p1} P1</span> : null}
                   </>
                 ) : <span className="good">clear</span>}

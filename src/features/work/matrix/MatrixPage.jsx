@@ -38,9 +38,13 @@ export default function MatrixPage() {
     return () => { live = false; };
   }, []);
 
+  // "Today" is part of the inputs: the day key changes at midnight (UTC, as the old code's today()),
+  // so the next render recomputes overdue / due-this-week instead of keeping yesterday's answer.
+  const dayKey = new Date().toISOString().slice(0, 10);
   const model = useMemo(
     () => createModel({ registry: reg.rows, tasks, filters, scope, me, now: new Date() }),
-    [reg.rows, tasks, filters, scope, me],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reg.rows, tasks, filters, scope, me, dayKey],
   );
   // A stale company or function in the URL (the registry no longer has it) is ignored (spec 7.13).
   const drill = model.validDrill(filters.drill);

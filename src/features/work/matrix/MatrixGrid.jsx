@@ -154,7 +154,6 @@ export function Tip({ tip, model, theme }) {
 
   const tasks = tip ? model.at(tip.company, tip.func) : [];
   const overdue = tasks.filter(model.isOverdue);
-  const fire = overdue.some(model.isFire);
   return createPortal(
     <div id="mx-tip" ref={ref} style={{ display: tip ? 'block' : 'none' }}>
       {tip ? (
@@ -164,7 +163,7 @@ export function Tip({ tip, model, theme }) {
             <div key={s}><i style={{ background: statusColor(s, theme) }}></i>{s}<b>{tasks.filter((t) => t.status === s).length}</b></div>
           ))}
           <hr />
-          <div className={fire ? 'od' : undefined} style={fire ? undefined : { color: 'var(--warm)' }}>Overdue<b>{overdue.length}</b></div>
+          <div className="od">Overdue<b>{overdue.length}</b></div>
         </>
       ) : null}
     </div>,

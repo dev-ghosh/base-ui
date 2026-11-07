@@ -121,8 +121,7 @@ export default function DrillPanel({ model, drill, tab, pivot, theme, statuses, 
           </div>
           <div className="mx-ph-sub">
             <span>{rows.length} {rows.length === 1 ? 'task' : 'tasks'}</span>
-            {/* Colour rule: the count is red only when one of these is a P1 that is overdue and mine. */}
-            <span className={rows.some(model.isFire) ? 'crit' : 'warn'}>{rows.filter(model.isOverdue).length} overdue</span>
+            <span className="crit">{rows.filter(model.isOverdue).length} overdue</span>
             <span className="warn">{rows.filter((t) => t.priority === 'P1').length} P1</span>
             <span className="muted">all statuses</span>
           </div>

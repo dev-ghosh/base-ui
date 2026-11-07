@@ -392,6 +392,18 @@ describe('hover tooltip', () => {
     expect(tip.style.display).toBe('none');
   });
 
+  it('the "Overdue" row keeps the old class (od) whoever owns the tasks, while the grid risk line follows the fire rule', () => {
+    setup();
+    mount();
+    // Acme/Sales: A4 is P1 + overdue but not mine -> the grid risk line is amber...
+    expect(read(cellAt('Sales', 'Acme')).riskColors[0]).toBe('var(--warm)');
+    // ...the tooltip and the drill are the old markup
+    fireEvent.mouseMove($('button', cellAt('Sales', 'Acme')), { clientX: 10, clientY: 10 });
+    const od = $$('div', document.getElementById('mx-tip')).find((d) => d.textContent.startsWith('Overdue'));
+    expect(od.className).toBe('od');
+    expect(od.style.color).toBe('');
+  });
+
   it('is not shown while the drill is open', () => {
     setup({ url: '/work/matrix?c=Acme&f=Ops' });
     mount();
@@ -494,20 +506,20 @@ describe('the drill slide-over', () => {
     expect(rows()).toEqual([['— none —', '2'], ['Zed Corp', '1']]);
   });
 
-  it('pivot risk cell: amber for overdue alone, red only with a mine P1 overdue, "clear" otherwise', () => {
+  it('pivot risk cell keeps the old colours: overdue is crit, P1 is warn, "clear" otherwise', () => {
     setup({ url: '/work/matrix?c=Acme&t=pivot&pv=priority' });
     mount();
     const risk = (label) => {
       const row = $$('table.mx-pivot tbody tr', panel()).find((r) => $('.mx-pv-l', r).textContent === label);
       return $$('span', $('.mx-pv-r', row)).map((x) => [x.className, x.textContent]);
     };
-    expect(risk('P1')).toEqual([['crit', '2 overdue'], ['warn', '2 P1']]);       // A1 is P1, overdue and mine
+    expect(risk('P1')).toEqual([['crit', '2 overdue'], ['warn', '2 P1']]);
     expect(risk('P2')).toEqual([['good', 'clear']]);
     expect(risk('P3')).toEqual([['good', 'clear']]);
     cleanup();
     setup({ url: '/work/matrix?scope=team&c=Acme&t=pivot&pv=priority' });
     mount();
-    expect(risk('P1')).toEqual([['warn', '1 overdue'], ['warn', '1 P1']]);        // A4: overdue P1 but not mine
+    expect(risk('P1')).toEqual([['crit', '1 overdue'], ['warn', '1 P1']]);        // A4 is not mine: still crit here (old markup)
   });
 
   it('the drill ignores the status chips; its header says so only while the chips narrow the grid', () => {
@@ -587,21 +599,21 @@ describe('kanban cards', () => {
     expect($$('.mx-card-m > *', $('.mx-card', panel())).map((c) => c.textContent)).toEqual(['P2', '#B1', 'unowned']);
   });
 
-  it('colour rule on cards: red only for a P1 that is overdue and mine, amber otherwise', () => {
+  it('badges keep the old colours: P1 and overdue are crit whoever owns the task, other priorities warn', () => {
     setup({ url: '/work/matrix?c=Acme&f=' });
     mount();
     const badges = (title) => $$('.mx-badge', $$('.mx-card', panel()).find((c) => $('.mx-card-t', c).textContent === title)).map((b) => [b.textContent, b.className.replace('mx-badge ', '')]);
     expect(badges('Alpha one')).toEqual([['P1', 'crit'], ['overdue', 'crit']]);       // P1 + overdue + mine
-    expect(badges('Alpha four')).toEqual([['P1', 'warn'], ['overdue', 'warn']]);      // P1 + overdue, not mine
+    expect(badges('Alpha four')).toEqual([['P1', 'crit'], ['overdue', 'crit']]);      // P1 + overdue, not mine: same as the old markup
     expect(badges('Alpha two')).toEqual([['P2', 'warn']]);
-    // header: overdue count is red only when a red card is in scope
+    // header: the overdue count is crit
     expect($('.mx-ph-sub span:nth-child(2)', panel()).className).toBe('crit');
   });
 
-  it('the header overdue count is amber when none of the overdue tasks is a P1 of mine', () => {
+  it('the header overdue count is crit even when none of the overdue tasks is a P1 of mine (old markup)', () => {
     setup({ url: '/work/matrix?c=Acme&f=Sales' });
     mount();
-    expect($$('.mx-ph-sub span', panel()).map((s) => [s.textContent, s.className])).toEqual([['2 tasks', ''], ['1 overdue', 'warn'], ['1 P1', 'warn'], ['all statuses', 'muted']]);
+    expect($$('.mx-ph-sub span', panel()).map((s) => [s.textContent, s.className])).toEqual([['2 tasks', ''], ['1 overdue', 'crit'], ['1 P1', 'warn'], ['all statuses', 'muted']]);
   });
 
   it('a card expands to its detail, and a flagged one shows the review note', () => {
@@ -642,12 +654,12 @@ describe('the list tab', () => {
     expect(titles()).toEqual(['Alpha four', 'Alpha one', 'Alpha three', 'Alpha two', 'Dropped one']);
   });
 
-  it('overdue dates follow the colour rule; counterparty and review note show under the title', () => {
+  it('overdue dates are mx-due-od, others mx-due (old classes); counterparty and review note show under the title', () => {
     setup({ url: '/work/matrix?c=Acme&t=list' });
     mount();
     const rowOf = (title) => $$('table.mx-list tbody tr', panel()).find((r) => $('.mx-tt', r).textContent === title);
-    expect($('td:last-child', rowOf('Alpha one')).className).toBe('mx-due-od');      // P1 + overdue + mine: red
-    expect($('td:last-child', rowOf('Alpha four')).className).toBe('mx-due-warm');   // overdue alone: amber
+    expect($('td:last-child', rowOf('Alpha one')).className).toBe('mx-due-od');
+    expect($('td:last-child', rowOf('Alpha four')).className).toBe('mx-due-od');     // overdue, not mine: same class as the old markup
     expect($('td:last-child', rowOf('Alpha two')).className).toBe('mx-due');
     expect($('td:last-child', rowOf('Dropped one')).textContent).toBe('—');
     expect($('.mx-sub', rowOf('Alpha two')).textContent).toBe('Zed Corp');
@@ -754,6 +766,17 @@ describe('writes from the drill (optimistic, rolled back on failure)', () => {
     expect(document.getElementById('mo-del').classList.contains('open')).toBe(true);
     expect(document.getElementById('del-body').textContent).toContain('Alpha one');
     expect(f.writes()).toHaveLength(0);
+  });
+});
+
+describe('today is an input of the model', () => {
+  it('the counts follow the day: the same page after midnight sees the next day', () => {
+    setup();
+    mount();
+    expect(kpis().find(([l]) => l === 'Overdue')[1]).toBe('3');            // 2026-11-10: A1, A4, U1
+    vi.setSystemTime(new Date('2026-11-13T12:00:00Z'));                     // A2 (due 11-12) is now overdue too
+    fireEvent.mouseMove($('button', cellAt('Ops', 'Acme')), { clientX: 5, clientY: 5 });   // a re-render with no changed data
+    expect(kpis().find(([l]) => l === 'Overdue')[1]).toBe('4');
   });
 });
 
