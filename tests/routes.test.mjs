@@ -13,7 +13,8 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const appDir = join(root, 'src', 'app', '(app)');
 
 // ── the inventory ─────────────────────────────────────────────────────────────
-const inv = readFileSync(join(root, 'docs', 'route-inventory.md'), 'utf8');
+// Normalise line endings: this checkout may be CRLF (core.autocrlf true) and the regexes below expect LF.
+const inv = readFileSync(join(root, 'docs', 'route-inventory.md'), 'utf8').replace(/\r\n/g, '\n');
 const sec11 = inv.split('## 11. Route list')[1].split('## 12.')[0];
 const block = sec11.match(/```\n([\s\S]*?)```/)[1];
 const routes = new Set();
