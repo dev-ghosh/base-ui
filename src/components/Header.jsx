@@ -4,28 +4,25 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
+import { useContactForm } from '../features/contacts/hooks/useContactForm.js';
 import { useLeadForm } from '../features/pipeline/hooks/useLeadForm.js';
 import { useTaskForm } from '../features/tasks/hooks/useTaskForm.js';
 import { useTheme } from '../hooks/useTheme.js';
+import { exportToExcel } from '../lib/export-excel.js';
 import { identityOf } from '../lib/identity.js';
+import { openMo } from '../lib/modals.js';
 import { titleForPath } from '../lib/nav.js';
 import { sidebarStore, toggleMenu } from '../lib/sidebar.js';
 import { THEMES } from '../lib/theme.js';
 
 // Buttons whose features are built in later tasks. They exist so the bar looks and
 // tabs as before; each is a named no-op until its task replaces it.
-// TODO(Task 11): smart search overlay (mo-smart-search, Ctrl+K), with saved-filters.js
-function openSmartSearch() {}
 // TODO(Task 7): syncNow(): re-read access and data and redraw, without a reload
 function syncNow() {}
 // TODO(Task 13): alerts panel (openAlertsPanel), with the unread badge on #notif-btn
 function openAlertsPanel() {}
-// TODO(Task 11): openAddContact()
-function openAddContact() {}
 // TODO(Task 12): openAddEvent()
 function openAddEvent() {}
-// TODO(Task 11): exportToExcel() (lazy-loads SheetJS)
-function exportToExcel() {}
 
 /**
  * The top bar (`header.topbar` in the old index.html): menu button, page title, search
@@ -41,6 +38,7 @@ export default function Header({ session, onSignOut }) {
   const { access } = useAccess();
   const { openAdd: openAddTask } = useTaskForm();
   const { openAdd: openAddLead } = useLeadForm();
+  const { openAdd: openAddContact } = useContactForm();
   const { theme, setTheme } = useTheme();
   const { open: sideOpen } = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.getState, sidebarStore.getState);
   const [menu, setMenu] = useState(null);   // null | 'theme' | 'new' | 'user'
@@ -80,7 +78,7 @@ export default function Header({ session, onSignOut }) {
       <h1 className="page-title" id="page-title">{titleForPath(pathname)}</h1>
 
       <div className="topbar-right">
-        <button type="button" className="search-pill" id="search-btn" onClick={openSmartSearch} title="Search (Ctrl+K)">
+        <button type="button" className="search-pill" id="search-btn" onClick={() => openMo('mo-smart-search')} title="Search (Ctrl+K)">
           <span data-icon="search" data-size="16"><Icon name="search" size={16} /></span><span className="sp-t">Search</span><kbd>Ctrl K</kbd>
         </button>
 

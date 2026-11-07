@@ -7,7 +7,9 @@ import { useAccess, useAccessMode } from '@/hooks/useAccess.js';
 import { useDataLoader } from '@/hooks/useDataLoader.js';
 import { useRealtime } from '@/hooks/useRealtime.js';
 import { useSession } from '@/hooks/useSession.js';
+import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
 import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
+import SmartSearch from '@/features/search/SmartSearch.jsx';
 import { TaskFormProvider } from '@/features/tasks/TaskFormProvider.jsx';
 import { resetAccess } from '@/lib/access.js';
 import { resolveLegacyUrl } from '@/lib/legacy-urls.js';
@@ -70,10 +72,12 @@ export default function AppLayout({ children, modal }) {
   if (!ready) return <Splash />;   // reading storage, waiting for access, or on the way to /login
 
   // TaskFormProvider holds the task form (#mo-tf) once for the whole shell: the header's
-  // New > Task, the task viewer's Edit and the lead screens all open it. LeadFormProvider does the same for the lead form (#mo-lf).
+  // New > Task, the task viewer's Edit and the lead screens all open it. LeadFormProvider does the same for the lead form (#mo-lf)
+  // and ContactFormProvider for the contact form (#mo-cf), its duplicate dialog and the delete confirmation.
   return (
     <TaskFormProvider>
       <LeadFormProvider>
+       <ContactFormProvider>
         <div className="app" id="app">
           <Splash />
           <Sidebar session={session} />
@@ -84,7 +88,9 @@ export default function AppLayout({ children, modal }) {
             {children}
           </div>
           {modal}
+          <SmartSearch />
         </div>
+       </ContactFormProvider>
       </LeadFormProvider>
     </TaskFormProvider>
   );

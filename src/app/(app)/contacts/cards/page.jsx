@@ -1,8 +1,5 @@
-'use client';
-
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The screen is drawn by contacts/layout.jsx (it is shared with /contacts/table); this segment only
+// selects the card view.
 export default function Page() {
-  return <PagePlaceholder title="Contacts: Cards" />;
+  return null;
 }

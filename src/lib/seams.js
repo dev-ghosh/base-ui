@@ -7,7 +7,7 @@
 // TODO(Task 13): toast notifications (js/notifications.js pushNotification)
 export function pushNotification(_title, _message, _type = 'info') {}
 
-// TODO(Task 11/13): the activity feed (js/activity.js recordActivity)
+// TODO(Task 13): the activity feed (js/activity.js recordActivity)
 export function recordActivity(_action, _target, _person, _type = 'task') {}
 
 // TODO(Task 13): the Escalate dialog (js/escalations.js openEscalateModal)
