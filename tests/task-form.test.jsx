@@ -182,6 +182,46 @@ describe('validation (the old saveTask, before it closes the form)', () => {
     expect(f.writes()).toHaveLength(0);
   });
 
+  it('Save pressed before the registry has loaded still enforces Company and Function, and works after', async () => {
+    seedForm();
+    registryStore.setState({ rows: [] });
+    let release;
+    const gate = new Promise((r) => { release = r; });
+    const f = stubFetch(async (url, init) => {
+      if (url.includes('/task_functions')) { await gate; return okResponse(REGISTRY); }
+      if (init.method === 'POST' && url.includes('/rest/v1/entities')) {
+        return okResponse([{ id: 'late1', tier: 'task', title: 'Quick', status: 'pending', owner_code: ME, company: 'Acme', func: 'Ops' }]);
+      }
+    });
+    mount();
+    fireEvent.click(screen.getByText('open-add'));
+    setVal('#tf-task-name', 'Quick');
+    save();                                                  // the registry fetch is still in flight
+    expect(f.writes()).toHaveLength(0);
+    release();
+    await waitFor(() => expect(getStatus()).toMatchObject({ kind: 'error', msg: 'Company and Function are both required on a new task' }));
+    expect(formOpen()).toBe(true);
+    expect(f.writes()).toHaveLength(0);
+
+    await waitFor(() => expect(optionTexts('#tf-company')).toEqual(['— Select —', 'Acme', 'Beta']));
+    setVal('#tf-company', 'Acme'); setVal('#tf-func', 'Ops');
+    save();
+    await waitFor(() => expect(f.writes().some((w) => w.method === 'POST' && w.url.includes('/rest/v1/entities'))).toBe(true));
+    expect(f.writes().find((w) => w.url.includes('/rest/v1/entities')).body).toMatchObject({ company: 'Acme', func: 'Ops' });
+  });
+
+  it('a stored function that is not active for the company is dropped once the registry loads', async () => {
+    seedForm({ tasks: [makeTask({ id: 't1', task: 'Old func', company: 'Acme', func: 'Retired', legacyTaskId: 7 })] });
+    registryStore.setState({ rows: [] });
+    const f = stubFetch(async (url) => (url.includes('/task_functions') ? okResponse(REGISTRY) : undefined));
+    mount();
+    fireEvent.click(screen.getByText('open-edit'));
+    await waitFor(() => expect(optionTexts('#tf-company')).toEqual(['— Select —', 'Acme', 'Beta']));
+    save();
+    await waitFor(() => expect(f.writes().some((w) => w.method === 'PATCH' && w.url.includes('/entities?id=eq.t1'))).toBe(true));
+    expect(f.writes().find((w) => w.url.includes('/entities?id=eq.t1')).body.func).toBeNull();
+  });
+
   it('an assigned-scope user starts as owner and cannot save a task owned by someone else', () => {
     seedForm({ access: { person_code: ME, can_write: true, task_scope: 'assigned' } });
     const f = stubFetch();

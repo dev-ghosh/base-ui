@@ -36,7 +36,7 @@ const checkStyle = { accentColor: 'var(--ac)', width: 13, height: 13 };
  */
 export default function TaskForm({ init, onSubmit, onCancel, onDelete }) {
   const { isAdmin } = useAccess();
-  const { companies, activeFuncs } = useRegistry();
+  const { companies, activeFuncs, ready: registryLoaded } = useRegistry();
   const fronts = useStore((s) => s.fronts);
   const contacts = useStore((s) => s.contacts);
   const people = useStore((s) => s.people);
@@ -92,6 +92,13 @@ export default function TaskForm({ init, onSubmit, onCancel, onDelete }) {
   }, [contactsOpen, assignedOpen]);
 
   const funcs = f.company ? activeFuncs(f.company) : [];
+
+  // The form can open before the registry has loaded (formFromTask then keeps the stored function).
+  // Once it is known, a function that is not active for the company reads as unset, as the old
+  // <select> did, so it cannot be saved unseen.
+  useEffect(() => {
+    if (registryLoaded && f.func && !(f.company && activeFuncs(f.company).includes(f.func))) set({ func: '' });
+  }, [registryLoaded, f.company, f.func]);
   const projOptions = [{ code: '', name: '— None —' }, ...fronts];
 
   // Contacts dropdown: selected first, then by name; at most 50 shown.

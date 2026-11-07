@@ -67,6 +67,10 @@ export function TaskFormProvider({ children }) {
   }, []);
 
   const submit = useCallback(async (data) => {
+    // A new task needs a Company and a Function, and that gate only holds once the registry is
+    // known: Save pressed while the fetch is still in flight must wait for it, not skip the check.
+    // (Nothing awaits when the registry is already loaded, so the checks stay synchronous then.)
+    if (!data.id && !registryReady()) await ensureRegistry();
     const s = store.getState();
     const problem = validateTask(data, { registryReady: registryReady(), access: s.access });
     if (problem) { setStatus('error', problem); return; }   // stays open, as the old saveTask returned before closeMo
