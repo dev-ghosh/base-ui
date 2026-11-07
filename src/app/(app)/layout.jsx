@@ -4,6 +4,8 @@ import { useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Header, ReadOnlyBanner, Sidebar, Splash, StatusBar } from '@/components';
 import { useAccess, useAccessMode } from '@/hooks/useAccess.js';
+import { useDataLoader } from '@/hooks/useDataLoader.js';
+import { useRealtime } from '@/hooks/useRealtime.js';
 import { useSession } from '@/hooks/useSession.js';
 import { resetAccess } from '@/lib/access.js';
 import { resolveLegacyUrl } from '@/lib/legacy-urls.js';
@@ -54,6 +56,11 @@ export default function AppLayout({ children, modal }) {
       }
     }
   }, [status, router]);
+
+  // Data and live updates start once the user is signed in and access is known, and stop
+  // (realtime) / restart (data) with the next sign-in. The splash does not wait for the data.
+  useDataLoader(status === 'signedIn');
+  useRealtime(status === 'signedIn');
 
   const ready = status === 'signedIn' && accessLoaded;
   useEffect(() => { if (ready) hideSplash(); }, [ready]);

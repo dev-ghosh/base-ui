@@ -20,6 +20,10 @@ vi.mock('@/lib/auth.js', async (importOriginal) => {
   return { ...real, scheduleAutoRefresh: vi.fn() };
 });
 
+// Not under test here: no network, no websocket.
+vi.mock('@/lib/load-data.js', () => ({ loadData: vi.fn(async () => true), syncData: vi.fn(async () => true) }));
+vi.mock('@/lib/realtime.js', () => ({ initRealtime: vi.fn(), destroyRealtime: vi.fn() }));
+
 import RootPage from '@/app/page.jsx';
 import AppLayout from '@/app/(app)/layout.jsx';
 import { resetAccess } from '@/lib/access.js';

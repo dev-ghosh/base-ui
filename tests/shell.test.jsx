@@ -17,6 +17,13 @@ vi.mock('@/lib/auth.js', async (importOriginal) => {
   return { ...real, scheduleAutoRefresh: vi.fn() };
 });
 
+// The shell test is about the shell: data loading and the websocket are stubbed here
+// (they are tested for real in data-loader.test.jsx / load-data.test.mjs). The layout
+// must still start them, which "data and live updates" below checks.
+const feeds = vi.hoisted(() => ({ loadData: vi.fn(async () => true), init: vi.fn(), destroy: vi.fn() }));
+vi.mock('@/lib/load-data.js', () => ({ loadData: feeds.loadData, syncData: vi.fn(async () => true) }));
+vi.mock('@/lib/realtime.js', () => ({ initRealtime: feeds.init, destroyRealtime: feeds.destroy }));
+
 import AppLayout from '@/app/(app)/layout.jsx';
 import { Modal } from '@/components';
 import { useModal } from '@/hooks/useModal.js';
@@ -507,6 +514,30 @@ describe('legacy URLs', () => {
   it('does nothing for a plain URL', async () => {
     await mountReady({ can_write: true });
     expect(nav.router.replace).not.toHaveBeenCalled();
+  });
+});
+
+describe('data and live updates', () => {
+  beforeEach(() => { feeds.loadData.mockClear(); feeds.init.mockClear(); feeds.destroy.mockClear(); });
+
+  it('start once the user is signed in and access has answered', async () => {
+    await mountReady({ can_write: true });
+    expect(feeds.loadData).toHaveBeenCalledTimes(1);
+    expect(feeds.init).toHaveBeenCalledTimes(1);
+  });
+
+  it('do not start for a signed-out visitor', async () => {
+    stubBackend({ access: {} });
+    mount();
+    await waitFor(() => expect(nav.router.replace).toHaveBeenCalledWith('/login'));
+    expect(feeds.loadData).not.toHaveBeenCalled();
+    expect(feeds.init).not.toHaveBeenCalled();
+  });
+
+  it('realtime is closed when the shell goes away', async () => {
+    await mountReady({ can_write: true });
+    cleanup();
+    expect(feeds.destroy).toHaveBeenCalled();
   });
 });
 
