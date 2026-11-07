@@ -213,14 +213,15 @@ export function createModel({ registry = [], tasks = [], filters, scope = 'every
   });
   const at = (c, f) => cell.get(c + ' ' + f) || [];
 
-  const riskOf = (list) => {
-    const od = list.filter(isOverdue).length;
-    const p1 = list.filter((t) => t.priority === 'P1').length;
-    // Colour rule for the whole Work tab: red only where a task is P1, overdue AND mine.
-    // Overdue alone is amber.
-    const fire = list.some((t) => isOverdue(t) && t.priority === 'P1' && isMine(t, me));
-    return { od, p1, fire };
-  };
+  // Colour rule for the whole Work tab: red only where a task is P1, overdue AND mine.
+  // Overdue alone is amber.
+  const isFire = (t) => isOverdue(t) && t.priority === 'P1' && isMine(t, me);
+
+  const riskOf = (list) => ({
+    od: list.filter(isOverdue).length,
+    p1: list.filter((t) => t.priority === 'P1').length,
+    fire: list.some(isFire),
+  });
 
   // Only selected statuses get a segment; unselected ones are omitted, not zeroed.
   const composition = (list) => {
@@ -331,7 +332,7 @@ export function createModel({ registry = [], tasks = [], filters, scope = 'every
 
   return {
     today, statuses, funcs, companies,
-    isActive: active, isOverdue, isUntagged, isUnowned,
+    isActive: active, isOverdue, isFire, isUntagged, isUnowned,
     activeFuncsFor: (company) => activeFuncsFor(registry, company),
     definitionOf: (func) => definitionOf(registry, func),
     rows, base, chipCounts, preset, prios, reviewCount, ownerSource,

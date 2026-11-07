@@ -1,8 +1,12 @@
-'use client';
+import { Suspense } from 'react';
+import MatrixPage from '@/features/work/matrix/MatrixPage.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The Matrix reads its filters from the URL (useSearchParams), which needs a Suspense boundary
+// so the rest of the tree can still be prerendered.
 export default function Page() {
-  return <PagePlaceholder title="Work: Matrix" />;
+  return (
+    <Suspense fallback={null}>
+      <MatrixPage />
+    </Suspense>
+  );
 }

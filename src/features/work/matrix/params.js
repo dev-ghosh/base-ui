@@ -7,7 +7,7 @@
  *   o   owner         p   priority        q   search text
  *   od  `1` = overdue only                rv  `1` = needs review
  *   c f company and function of the drill overlay ("" = all)
- *   k   drill kind: cell | untagged | review (absent = cell)
+ *   k   drill kind: cell | untagged | review (absent = cell; written for the All x All drill)
  *   t   drill tab: board | list | pivot (default board)
  *   pv  pivot axis, only with t=pivot (default assignedTo)
  *
@@ -85,7 +85,9 @@ export function serializeMatrixParams(filters) {
   if (d) {
     if (d.company) p.set('c', d.company);
     if (d.func)    p.set('f', d.func);
-    if (d.kind && d.kind !== 'cell') p.set('k', d.kind);
+    // `k=cell` is only written for the All x All drill: with no c, f or k at all the old hash could
+    // not tell "the All drill" from "no drill", and a reload lost it.
+    if (d.kind && (d.kind !== 'cell' || (!d.company && !d.func))) p.set('k', d.kind);
     p.set('t', filters.tab || DEFAULT_TAB);
     if (filters.tab === 'pivot') p.set('pv', filters.pivot || DEFAULT_PIVOT);
   }

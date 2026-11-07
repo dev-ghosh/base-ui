@@ -30,6 +30,9 @@ const pivot = { ...defaultFilters(), drill: { company: 'Acme Co', func: '', kind
 eq(parseMatrixParams(serializeMatrixParams(pivot)), pivot, 'pivot axis survives');
 const kpi = { ...defaultFilters(), drill: { company: '', func: '', kind: 'untagged' }, tab: 'board' };
 eq(parseMatrixParams(serializeMatrixParams(kpi)), kpi, 'an untagged KPI drill survives');
+const everything = { ...defaultFilters(), drill: { company: '', func: '', kind: 'cell' } };
+eq(parseMatrixParams(serializeMatrixParams(everything)), everything, 'the All x All drill survives (the old hash lost it)');
+assert(serializeMatrixParams(everything) === 'k=cell&t=board', 'it is written as k=cell&t=board');
 const review = { ...defaultFilters(), statuses: ['Pending'], drill: { company: '', func: '', kind: 'review' } };
 eq(parseMatrixParams(serializeMatrixParams(review)), review, 'a review KPI drill survives');
 assert(serializeMatrixParams(withCompany) === 'c=Acme+Co&f=Ops&t=list', 'old key names and order: c, f, (k only when not cell), t');

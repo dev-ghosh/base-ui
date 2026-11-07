@@ -26,6 +26,7 @@ function readStored() {
  * { scope, setScope(s), counts: {mine, team, everyone}, me, urlScope, mineUnavailable }
  *   urlScope         the valid `?scope=` in the URL, or null (surface links carry it so it persists)
  *   mineUnavailable  no owner code resolves, so Mine is disabled
+ *   fellBack         Mine was asked for but is unavailable, so Everyone is showing instead
  */
 export function useScope() {
   const params = useSearchParams();
@@ -37,7 +38,9 @@ export function useScope() {
   const me = currentOwnerCode(access);
   const asked = params?.get('scope') ?? null;
   const urlScope = SCOPES.includes(asked) ? asked : null;
-  const scope = resolveScope(urlScope ?? readStored(), me);
+  const stored = readStored();
+  const requested = urlScope ?? stored;
+  const scope = resolveScope(requested, me);
   const counts = useMemo(() => scopeCounts(buildQueue(tasks), me), [tasks, me]);
 
   const search = params?.toString() ?? '';
@@ -46,8 +49,11 @@ export function useScope() {
     try { localStorage.setItem(SCOPE_KEY, next); } catch { /* ignore */ }
     const p = new URLSearchParams(search);
     p.set('scope', next);
-    router.replace(`${pathname}?${p.toString()}`);
+    router.replace(`${pathname}?${p.toString()}`, { scroll: false });
   }, [me, pathname, router, search]);
 
-  return { scope, setScope, counts, me, urlScope, mineUnavailable: !me };
+  // Mine was asked for (URL or storage) but cannot be honoured: the surfaces say so.
+  const fellBack = requested === 'mine' && !me;
+
+  return { scope, setScope, counts, me, urlScope, mineUnavailable: !me, fellBack };
 }
