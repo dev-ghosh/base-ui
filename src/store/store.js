@@ -68,6 +68,9 @@ export function createInitialState() {
     // From rie_my_access(): {email, display_name, role, can_write, is_admin}.
     // null until it resolves, which means "not known yet", never "denied".
     access: null,
+    // true once rie_my_access() has answered (or failed): the difference between "not known yet"
+    // (access null, nothing set on <html>) and "known to be read-only" (access null, class ro).
+    accessLoaded: false,
     currentUser: null,
     session: null,
   };
