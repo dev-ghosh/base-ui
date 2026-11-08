@@ -103,6 +103,12 @@ export function createInitialState() {
     dataLoaded: false,
     currentUser: null,
     session: null,
+
+    // The person's own preferences (public.user_prefs, or this device when that table is not there):
+    // job title, phone, avatar colour, e-mail alert choices. null until loadPrefs() has run.
+    // prefsRemote: true = saved to the database, false = device only, null = not known yet.
+    prefs: null,
+    prefsRemote: null,
   };
 }
 

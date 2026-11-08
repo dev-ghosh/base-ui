@@ -3,8 +3,8 @@
 // Node can run it.
 //
 // Left to the screens that own them (they were part of the old loadData but belong
-// to later tasks): the task_functions registry (matrix), profile
-// preferences, the seen-task/alert bookkeeping, and the one-time tour toast.
+// to later tasks): the task_functions registry (matrix), the seen-task/alert bookkeeping, and the
+// one-time tour toast (needs the toast of Task 13).
 import { store } from '../store/store.js';
 import { getStorage } from './config.js';
 import { sbGet, safeGet } from './rest.js';
@@ -15,6 +15,7 @@ import {
 import { setStatus } from './status.js';
 import { readCache, writeCache, cacheAgeMinutes, CACHED_LISTS } from './data-cache.js';
 import { beginLoad, isCurrentLoad } from './user-data.js';
+import { loadPrefs } from './prefs.js';
 
 /**
  * The escalations rows (newest 500), kept as raw rows in store.escalations. Port of loadEscalations() in
@@ -118,8 +119,8 @@ export async function loadData() {
       'Connected',
       'Synced ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     );
-    // Per-person data, after the lists (the old loadData awaited loadEscalations() here).
-    await loadEscalations(token);
+    // Per-person data, after the lists (the old loadData awaited loadEscalations() and loadPrefs() here).
+    await Promise.all([loadEscalations(token), loadPrefs(token)]);
     return true;
   } catch (e) {
     if (!isCurrentLoad(token)) return false;

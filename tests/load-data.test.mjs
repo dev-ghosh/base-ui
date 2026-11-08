@@ -71,6 +71,7 @@ const expected = [
   'entity_owners?removed_at=is.null&select=entity_id,person_code',
   'entity_events?order=created_at.desc&limit=60',
   'escalations?order=created_at.desc&limit=500',   // after the lists, as the old loadData awaited loadEscalations()
+  'user_prefs?email=eq.&limit=1',                  // ... and loadPrefs() (the signed-in e-mail is empty in this test)
 ];
 check(paths.length === expected.length, `${expected.length} requests are made (got ${paths.length})`);
 check(expected.every((p, i) => paths[i] === p), 'tables, queries and order match the old loadData');
@@ -196,7 +197,7 @@ mem.set('rie_cache_v3', 'old');
 calls.length = 0;
 await syncData();
 check(!mem.has('rie_cache_v3'), 'syncData removes rie_cache_v3');
-check(calls.length === 17, 'syncData reloads all endpoints');
+check(calls.length === 18, 'syncData reloads all endpoints');
 
 // ---- escalations: raw rows into store.escalations (Analytics counts the open ones) ----
 reset();

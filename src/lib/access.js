@@ -1,6 +1,6 @@
 // Who the signed-in user is allowed to be, as far as the interface is concerned.
-// Port of the first part of rie-dashboard2/js/access.js (roles, canWrite/isAdmin,
-// loadMyAccess, applyAccessMode). The Access admin page is a later task.
+// Port of the first part of rie-dashboard2/js/access.js (roles, scopes, extras, canWrite/isAdmin,
+// loadMyAccess, applyAccessMode). The Access admin overlay (mo-access) is features/access + lib/access-admin.js.
 //
 // Nothing here enforces anything: RLS does (see access.js in the old app). This
 // makes the interface honest about a boundary the database already holds.
@@ -20,6 +20,25 @@ export const ROLES = [
   { value: 'viewer', label: 'Viewer',
     blurb: 'Can look at what they see. Cannot change anything.' },
 ];
+
+/**
+ * The third axis. Role says WHAT you may do, companies say WHICH company's rows, task scope says
+ * WHOSE tasks. Enforced by rie_task_visible() inside the RLS policies; this is only the words for it.
+ */
+export const SCOPES = [
+  { value: 'all', label: 'All tasks', blurb: 'Sees every task, initiative, contact, lead and event.' },
+  { value: 'assigned', label: 'Assigned only', blurb: 'Sees only tasks assigned to them, plus the initiatives those sit under.' },
+];
+
+/** What an admin can open up for an assigned-scope person, one chip each. */
+export const EXTRAS = [
+  { value: 'contacts', label: 'Contacts' },
+  { value: 'leads', label: 'Leads' },
+  { value: 'events', label: 'Events' },
+];
+
+export const scopeLabel = (v) => SCOPES.find((x) => x.value === v)?.label || v;
+export const roleLabel = (v) => ROLES.find((r) => r.value === v)?.label || v;
 
 export const roleFor = (access) => ROLES.find((r) => r.value === access?.role) || null;
 

@@ -1,16 +1,19 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
 import { useContactForm } from '../features/contacts/hooks/useContactForm.js';
 import { useLeadForm } from '../features/pipeline/hooks/useLeadForm.js';
+import { useAvatarColour } from '../features/profile/hooks/usePrefs.js';
 import { useTaskForm } from '../features/tasks/hooks/useTaskForm.js';
 import { useTheme } from '../hooks/useTheme.js';
 import { exportToExcel } from '../lib/export-excel.js';
 import { identityOf } from '../lib/identity.js';
+import { menuStore, setMenu, toggleHeaderMenu } from '../lib/menus.js';
 import { openMo } from '../lib/modals.js';
+import { openAlertsPanel } from '../lib/seams.js';
 import { titleForPath } from '../lib/nav.js';
 import { sidebarStore, toggleMenu } from '../lib/sidebar.js';
 import { THEMES } from '../lib/theme.js';
@@ -19,8 +22,6 @@ import { THEMES } from '../lib/theme.js';
 // tabs as before; each is a named no-op until its task replaces it.
 // TODO(Task 7): syncNow(): re-read access and data and redraw, without a reload
 function syncNow() {}
-// TODO(Task 13): alerts panel (openAlertsPanel), with the unread badge on #notif-btn
-function openAlertsPanel() {}
 // TODO(Task 12): openAddEvent()
 function openAddEvent() {}
 
@@ -41,10 +42,12 @@ export default function Header({ session, onSignOut }) {
   const { openAdd: openAddContact } = useContactForm();
   const { theme, setTheme } = useTheme();
   const { open: sideOpen } = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.getState, sidebarStore.getState);
-  const [menu, setMenu] = useState(null);   // null | 'theme' | 'new' | 'user'
+  // null | 'theme' | 'new' | 'user'. Shared (lib/menus.js) so Help can open the New and account menus.
+  const menu = useSyncExternalStore(menuStore.subscribe, () => menuStore.getState().menu, () => null);
   const me = identityOf(session, access);
+  const avatarColour = useAvatarColour();
 
-  const toggle = (name) => setMenu((m) => (m === name ? null : name));
+  const toggle = toggleHeaderMenu;
   const cls = (name, extra) => 'menu menu-r' + (extra ? ' ' + extra : '') + (menu === name ? ' open' : '');
   const go = (href) => { setMenu(null); router.push(href); };
 
@@ -127,7 +130,7 @@ export default function Header({ session, onSignOut }) {
 
         <div className="menu-wrap">
           <button type="button" className="user-chip" id="user-chip" onClick={() => toggle('user')} aria-haspopup="menu" aria-expanded={String(menu === 'user')} title="Account">
-            <span className="user-av" id="user-av">{me.initials}</span>
+            <span className="user-av" id="user-av" style={{ background: avatarColour }}>{me.initials}</span>
             <span className="sp-t" id="user-name">{me.chipName}</span>
           </button>
           <div className={cls('user', 'um')} id="user-menu" role="menu">

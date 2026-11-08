@@ -1,8 +1,5 @@
-'use client';
-
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The screen is drawn by profile/layout.jsx (it is shared by the four sections); this segment only
+// selects the security section.
 export default function Page() {
-  return <PagePlaceholder title="Profile: Security" />;
+  return null;
 }

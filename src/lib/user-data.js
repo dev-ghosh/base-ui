@@ -16,6 +16,7 @@ const DATA_KEYS = [
   'entities', 'fronts', 'people', 'coOwners', 'initiatives', 'candidates', 'decisions',
   'cleanups', 'decideRows', 'decideLoaded', 'decideSweep', 'leads', 'entityEvents', 'escalations', 'escalationsError', 'dataLoaded',
   'employees', 'teamLoaded', 'teamError', 'cards', 'expenses', 'expensesLoaded', 'expError',
+  'prefs', 'prefsRemote',   // job title and phone: the person's, and gone with them
 ];
 
 /** Identify the load that is starting now: this sign-in, this person. */

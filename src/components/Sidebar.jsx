@@ -4,19 +4,19 @@ import { Fragment, useEffect, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
+import { useAvatarColour } from '../features/profile/hooks/usePrefs.js';
+import { openAccess } from '../lib/access-admin.js';
 import { identityOf } from '../lib/identity.js';
 import { openMo } from '../lib/modals.js';
 import { ADMIN_ITEM, FOOT_ITEMS, NAV_SECTIONS, PROFILE_ITEM, navKeyForPath } from '../lib/nav.js';
 import { closeSidebarIfMobile, initSidebar, sidebarStore } from '../lib/sidebar.js';
 
-// Overlays the sidebar opens. They are not pages (docs/route-inventory.md section 9). Team workload and
-// Activity are modals mounted in the (app) layout (features/workload, features/activity); the others
-// are built in later tasks, so theirs is a named no-op.
+// Overlays the sidebar opens. They are not pages (docs/route-inventory.md section 9). Team workload,
+// Activity and Manage access are modals mounted in the (app) layout (features/workload, features/activity,
+// features/access); Manage access is admins only (openAccess refuses anyone else).
 const openWorkloadPanel = () => openMo('mo-workload');
 const openActivityPanel = () => openMo('mo-activity');
-// TODO(Task 16): Manage access (mo-access, openAccess), admins only
-function openAccessOverlay() {}
-const OVERLAYS = { workload: openWorkloadPanel, activity: openActivityPanel, access: openAccessOverlay };
+const OVERLAYS = { workload: openWorkloadPanel, activity: openActivityPanel, access: openAccess };
 
 /**
  * The side menu (`aside#side` in the old index.html). A fixed part of the layout on
@@ -30,6 +30,7 @@ export default function Sidebar({ session }) {
   const { open, wide, opening } = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.getState, sidebarStore.getState);
   const active = navKeyForPath(pathname);
   const me = identityOf(session, access);
+  const avatarColour = useAvatarColour();
 
   useEffect(() => initSidebar(), []);
   // Every panel change closes the drawer (setActiveNav in the old shell.js).
@@ -110,7 +111,7 @@ export default function Sidebar({ session }) {
             title={PROFILE_ITEM.label}
             onClick={() => go(PROFILE_ITEM.href)}
           >
-            <span className="user-av" id="user-av-side">{me.initials}</span>
+            <span className="user-av" id="user-av-side" style={{ background: avatarColour }}>{me.initials}</span>
             <span className="nv-t side-user-t"><b id="user-name-side">{me.name}</b><small id="user-role-side">{me.roleLabel}</small></span>
           </button>
         </div>
