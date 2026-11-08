@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { store } from '../../../../store/store.js';
 import { assertCanWrite } from '../../../../lib/rest.js';
 import { setStatus } from '../../../../lib/status.js';
@@ -26,7 +27,9 @@ const sameId = (a, b) => a != null && b != null && String(a) === String(b);
  */
 export function useBulk() {
   const actions = useTaskActions();
-  const [mode, setMode] = useState(false);
+  // `?bulk=1` starts with Bulk edit on (Help's "Open Bulk edit": the old `toggleTaskBulkMode()` after switching tab).
+  const startOn = useSearchParams()?.get('bulk') === '1';
+  const [mode, setMode] = useState(startOn);
   const [selected, setSelected] = useState(() => new Set());
   const busy = useRef(false);
 

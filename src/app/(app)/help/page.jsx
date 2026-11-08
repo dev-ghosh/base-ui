@@ -1,8 +1,8 @@
 'use client';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
+import HelpScreen from '@/features/help/HelpScreen.jsx';
 
-// Placeholder: a later task replaces this with the real screen.
+// Help & tools: one page (the tool guide and the keyboard shortcuts). The tour is an overlay.
 export default function Page() {
-  return <PagePlaceholder title="Help & tools" />;
+  return <HelpScreen />;
 }

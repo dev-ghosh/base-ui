@@ -61,6 +61,14 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); localStorage.clear(); });
 
 describe('bulk mode: toggle, select, select all, clear', () => {
+  it('?bulk=1 (the Help card "Open Bulk edit") starts with bulk mode on', () => {
+    setup({ url: '/work/board?bulk=1' });
+    mount();
+    expect(document.getElementById('tf-bulk').getAttribute('aria-pressed')).toBe('true');
+    expect(bar()).not.toBeNull();
+    expect($$('.kb-card input[type="checkbox"]').length).toBeGreaterThan(0);
+  });
+
   it('is off to begin with; the toggle shows the bar and a tick box on every card, exit hides them and drops the selection', () => {
     setup();
     mount();

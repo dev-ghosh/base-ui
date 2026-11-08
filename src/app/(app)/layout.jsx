@@ -8,6 +8,7 @@ import { useDataLoader } from '@/hooks/useDataLoader.js';
 import { useRealtime } from '@/hooks/useRealtime.js';
 import { useSession } from '@/hooks/useSession.js';
 import ActivityModal from '@/features/activity/ActivityModal.jsx';
+import TourOverlay from '@/features/help/TourOverlay.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
 import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
 import SmartSearch from '@/features/search/SmartSearch.jsx';
@@ -94,6 +95,8 @@ export default function AppLayout({ children, modal }) {
           {/* Sidebar overlays: Team workload (mo-workload) and Activity (mo-activity). */}
           <WorkloadModal />
           <ActivityModal />
+          {/* The guided tour (started from Help and Profile > Security). */}
+          <TourOverlay />
         </div>
        </ContactFormProvider>
       </LeadFormProvider>
