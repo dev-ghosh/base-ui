@@ -1,8 +1,17 @@
 'use client';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
+import { Suspense } from 'react';
+import ExpensesScreen from '@/features/expenses/ExpensesScreen.jsx';
 
-// Placeholder: a later task replaces this with the real screen.
+/**
+ * /expenses: one page. The month and the filters (card, category, person, status) are search params,
+ * which needs a Suspense boundary so the rest of the tree can still be prerendered; the expense form
+ * and the cards manager are component state.
+ */
 export default function Page() {
-  return <PagePlaceholder title="Expenses" />;
+  return (
+    <Suspense fallback={null}>
+      <ExpensesScreen />
+    </Suspense>
+  );
 }
