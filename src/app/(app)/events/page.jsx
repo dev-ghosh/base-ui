@@ -1,8 +1,14 @@
-'use client';
+import { Suspense } from 'react';
+import EventsScreen from '@/features/events/EventsScreen.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The filters live in the URL (useSearchParams), which needs a Suspense boundary so the rest of the tree can
+// still be prerendered. `.tp.active` is the old `#tab-events` page frame.
 export default function Page() {
-  return <PagePlaceholder title="Events" />;
+  return (
+    <div className="tp active" id="tab-events">
+      <Suspense fallback={null}>
+        <EventsScreen />
+      </Suspense>
+    </div>
+  );
 }

@@ -1,8 +1,7 @@
-'use client';
+import { EventViewPage } from '@/features/events/EventViewRoute.jsx';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// Direct visit (a shared link or a refresh): the viewer inside the page frame. A soft navigation from any
+// screen is intercepted by @modal/(.)events/[id] instead.
 export default function Page() {
-  return <PagePlaceholder title="Event" />;
+  return <EventViewPage />;
 }

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
 import { useContactForm } from '../features/contacts/hooks/useContactForm.js';
+import { useEventForm } from '../features/events/hooks/useEventForm.js';
 import { useLeadForm } from '../features/pipeline/hooks/useLeadForm.js';
 import { useAvatarColour } from '../features/profile/hooks/usePrefs.js';
 import { useTaskForm } from '../features/tasks/hooks/useTaskForm.js';
@@ -22,8 +23,6 @@ import { THEMES } from '../lib/theme.js';
 // tabs as before; each is a named no-op until its task replaces it.
 // TODO(Task 7): syncNow(): re-read access and data and redraw, without a reload
 function syncNow() {}
-// TODO(Task 12): openAddEvent()
-function openAddEvent() {}
 
 /**
  * The top bar (`header.topbar` in the old index.html): menu button, page title, search
@@ -39,6 +38,7 @@ export default function Header({ session, onSignOut }) {
   const { access } = useAccess();
   const { openAdd: openAddTask } = useTaskForm();
   const { openAdd: openAddLead } = useLeadForm();
+  const { openAdd: openAddEvent } = useEventForm();
   const { openAdd: openAddContact } = useContactForm();
   const { theme, setTheme } = useTheme();
   const { open: sideOpen } = useSyncExternalStore(sidebarStore.subscribe, sidebarStore.getState, sidebarStore.getState);

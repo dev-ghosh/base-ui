@@ -12,6 +12,7 @@ import AccessModal from '@/features/access/AccessModal.jsx';
 import ActivityModal from '@/features/activity/ActivityModal.jsx';
 import PairOverlay from '@/features/auth/PairOverlay.jsx';
 import TourOverlay from '@/features/help/TourOverlay.jsx';
+import { EventFormProvider } from '@/features/events/EventFormProvider.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
 import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
 import SmartSearch from '@/features/search/SmartSearch.jsx';
@@ -79,12 +80,14 @@ export default function AppLayout({ children, modal }) {
 
   // TaskFormProvider holds the task form (#mo-tf) once for the whole shell: the header's
   // New > Task, the task viewer's Edit and the lead screens all open it. LeadFormProvider does the same for the lead form (#mo-lf)
-  // and ContactFormProvider for the contact form (#mo-cf), its duplicate dialog and the delete confirmation.
+  // ContactFormProvider for the contact form (#mo-cf), its duplicate dialog and the delete confirmation, and
+  // EventFormProvider for the event form (#mo-ef), the guest form (#mo-guest) and their delete confirmations.
   return (
     <SignOutProvider signOut={signOut}>
     <TaskFormProvider>
       <LeadFormProvider>
        <ContactFormProvider>
+        <EventFormProvider>
         <div className="app" id="app">
           <Splash />
           <Sidebar session={session} />
@@ -106,6 +109,7 @@ export default function AppLayout({ children, modal }) {
           {/* The guided tour (started from Help and Profile > Security). */}
           <TourOverlay />
         </div>
+        </EventFormProvider>
        </ContactFormProvider>
       </LeadFormProvider>
     </TaskFormProvider>

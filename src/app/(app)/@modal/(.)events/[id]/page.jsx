@@ -1,9 +1,6 @@
-'use client';
+import { EventViewModal } from '@/features/events/EventViewRoute.jsx';
 
-import { ModalPlaceholder } from '@/components/PagePlaceholder.jsx';
-
-// Placeholder for the record viewer shown over the page on a soft navigation to /events/[id].
-// A later task replaces it with the real viewer (the full-page twin renders on a direct visit).
+// The event viewer (mo-edet) over whatever page opened it; the real URL is /events/<id>.
 export default function Page() {
-  return <ModalPlaceholder title="Event" />;
+  return <EventViewModal />;
 }
