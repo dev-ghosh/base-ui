@@ -1,0 +1,187 @@
+{
+ "thresholds": {
+  "low": 5,
+  "medium": 12,
+  "high": 18,
+  "critical": 25
+ },
+ "rows": [
+  {
+   "name": "Crit Person",
+   "ownerCode": "CR",
+   "totalOpen": 26,
+   "overdue": 4,
+   "p1": 2,
+   "score": 100,
+   "status": "Critical",
+   "statusBg": "rgba(239, 68, 68, 0.12)",
+   "statusColor": "var(--hot, #ef4444)",
+   "barColor": "var(--hot, #ef4444)",
+   "taskIds": [
+    "t1",
+    "t2",
+    "t3",
+    "t4",
+    "t5",
+    "t6",
+    "t7",
+    "t8",
+    "t9",
+    "t10",
+    "t11",
+    "t12",
+    "t13",
+    "t14",
+    "t15",
+    "t16",
+    "t17",
+    "t18",
+    "t19",
+    "t20",
+    "t21",
+    "t22",
+    "t23",
+    "t24",
+    "t25",
+    "t26"
+   ]
+  },
+  {
+   "name": "Heavy Person",
+   "ownerCode": "HV",
+   "totalOpen": 18,
+   "overdue": 0,
+   "p1": 1,
+   "score": 72,
+   "status": "Heavy",
+   "statusBg": "rgba(249, 115, 22, 0.12)",
+   "statusColor": "var(--warm, #f97316)",
+   "barColor": "var(--warm, #f97316)",
+   "taskIds": [
+    "t27",
+    "t28",
+    "t29",
+    "t30",
+    "t31",
+    "t32",
+    "t33",
+    "t34",
+    "t35",
+    "t36",
+    "t37",
+    "t38",
+    "t39",
+    "t40",
+    "t41",
+    "t42",
+    "t43",
+    "t44"
+   ]
+  },
+  {
+   "name": "Active Person",
+   "ownerCode": "AC",
+   "totalOpen": 12,
+   "overdue": 11,
+   "p1": 0,
+   "score": 48,
+   "status": "Active",
+   "statusBg": "rgba(59, 130, 246, 0.12)",
+   "statusColor": "var(--cold, #3b82f6)",
+   "barColor": "var(--cold, #3b82f6)",
+   "taskIds": [
+    "t62",
+    "t63",
+    "t64",
+    "t65",
+    "t66",
+    "t67",
+    "t68",
+    "t69",
+    "t70",
+    "t71",
+    "t72",
+    "t73"
+   ]
+  },
+  {
+   "name": "Normal Person",
+   "ownerCode": "NR",
+   "totalOpen": 4,
+   "overdue": 2,
+   "p1": 1,
+   "score": 16,
+   "status": "Normal",
+   "statusBg": "rgba(34, 197, 94, 0.12)",
+   "statusColor": "var(--gr, #22c55e)",
+   "barColor": "var(--gr, #22c55e)",
+   "taskIds": [
+    "t74",
+    "t75",
+    "t76",
+    "t78"
+   ]
+  },
+  {
+   "name": "Unassigned",
+   "ownerCode": "",
+   "totalOpen": 2,
+   "overdue": 0,
+   "p1": 0,
+   "score": 8,
+   "status": "Normal",
+   "statusBg": "rgba(34, 197, 94, 0.12)",
+   "statusColor": "var(--gr, #22c55e)",
+   "barColor": "var(--gr, #22c55e)",
+   "taskIds": [
+    "t79",
+    "t80"
+   ]
+  },
+  {
+   "name": "Shared Person",
+   "ownerCode": "SH",
+   "totalOpen": 1,
+   "overdue": 1,
+   "p1": 1,
+   "score": 4,
+   "status": "Normal",
+   "statusBg": "rgba(34, 197, 94, 0.12)",
+   "statusColor": "var(--gr, #22c55e)",
+   "barColor": "var(--gr, #22c55e)",
+   "taskIds": [
+    "t78"
+   ]
+  },
+  {
+   "name": "Free Text Name",
+   "ownerCode": "",
+   "totalOpen": 1,
+   "overdue": 0,
+   "p1": 0,
+   "score": 4,
+   "status": "Normal",
+   "statusBg": "rgba(34, 197, 94, 0.12)",
+   "statusColor": "var(--gr, #22c55e)",
+   "barColor": "var(--gr, #22c55e)",
+   "taskIds": [
+    "t81"
+   ]
+  },
+  {
+   "name": "shared person",
+   "ownerCode": "SH",
+   "totalOpen": 1,
+   "overdue": 0,
+   "p1": 0,
+   "score": 4,
+   "status": "Normal",
+   "statusBg": "rgba(34, 197, 94, 0.12)",
+   "statusColor": "var(--gr, #22c55e)",
+   "barColor": "var(--gr, #22c55e)",
+   "taskIds": [
+    "t82"
+   ]
+  }
+ ]
+}

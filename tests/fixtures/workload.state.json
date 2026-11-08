@@ -1,0 +1,687 @@
+{
+ "now": "2026-11-10T12:00:00Z",
+ "people": [
+  {
+   "code": "CR",
+   "display_name": "Crit Person"
+  },
+  {
+   "code": "HV",
+   "display_name": "Heavy Person"
+  },
+  {
+   "code": "AC",
+   "display_name": "Active Person"
+  },
+  {
+   "code": "NR",
+   "display_name": "Normal Person"
+  },
+  {
+   "code": "SH",
+   "display_name": "Shared Person"
+  }
+ ],
+ "tasks": [
+  {
+   "id": "t1",
+   "task": "Task 1",
+   "status": "Pending",
+   "priority": "P1",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-11-01"
+  },
+  {
+   "id": "t2",
+   "task": "Task 2",
+   "status": "Pending",
+   "priority": "P1",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-11-01"
+  },
+  {
+   "id": "t3",
+   "task": "Task 3",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-11-01"
+  },
+  {
+   "id": "t4",
+   "task": "Task 4",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-11-01"
+  },
+  {
+   "id": "t5",
+   "task": "Task 5",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t6",
+   "task": "Task 6",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t7",
+   "task": "Task 7",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t8",
+   "task": "Task 8",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t9",
+   "task": "Task 9",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t10",
+   "task": "Task 10",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t11",
+   "task": "Task 11",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t12",
+   "task": "Task 12",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t13",
+   "task": "Task 13",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t14",
+   "task": "Task 14",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t15",
+   "task": "Task 15",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t16",
+   "task": "Task 16",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t17",
+   "task": "Task 17",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t18",
+   "task": "Task 18",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t19",
+   "task": "Task 19",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t20",
+   "task": "Task 20",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t21",
+   "task": "Task 21",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t22",
+   "task": "Task 22",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t23",
+   "task": "Task 23",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t24",
+   "task": "Task 24",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t25",
+   "task": "Task 25",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t26",
+   "task": "Task 26",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Crit Person",
+   "nextFollowUp": "2026-12-01"
+  },
+  {
+   "id": "t27",
+   "task": "Task 27",
+   "status": "In Progress",
+   "priority": "A",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t28",
+   "task": "Task 28",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t29",
+   "task": "Task 29",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t30",
+   "task": "Task 30",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t31",
+   "task": "Task 31",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t32",
+   "task": "Task 32",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t33",
+   "task": "Task 33",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t34",
+   "task": "Task 34",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t35",
+   "task": "Task 35",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t36",
+   "task": "Task 36",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t37",
+   "task": "Task 37",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t38",
+   "task": "Task 38",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t39",
+   "task": "Task 39",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t40",
+   "task": "Task 40",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t41",
+   "task": "Task 41",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t42",
+   "task": "Task 42",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t43",
+   "task": "Task 43",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t44",
+   "task": "Task 44",
+   "status": "In Progress",
+   "priority": "P3",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t45",
+   "task": "Task 45",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t46",
+   "task": "Task 46",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t47",
+   "task": "Task 47",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t48",
+   "task": "Task 48",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t49",
+   "task": "Task 49",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t50",
+   "task": "Task 50",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t51",
+   "task": "Task 51",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t52",
+   "task": "Task 52",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t53",
+   "task": "Task 53",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t54",
+   "task": "Task 54",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t55",
+   "task": "Task 55",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t56",
+   "task": "Task 56",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t57",
+   "task": "Task 57",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t58",
+   "task": "Task 58",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t59",
+   "task": "Task 59",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t60",
+   "task": "Task 60",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t61",
+   "task": "Task 61",
+   "status": "Completed",
+   "priority": "P2",
+   "assignedTo": "Heavy Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t62",
+   "task": "Task 62",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-10"
+  },
+  {
+   "id": "t63",
+   "task": "Task 63",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t64",
+   "task": "Task 64",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t65",
+   "task": "Task 65",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t66",
+   "task": "Task 66",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t67",
+   "task": "Task 67",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t68",
+   "task": "Task 68",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t69",
+   "task": "Task 69",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t70",
+   "task": "Task 70",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t71",
+   "task": "Task 71",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t72",
+   "task": "Task 72",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t73",
+   "task": "Task 73",
+   "status": "On Hold",
+   "priority": "P2",
+   "assignedTo": "Active Person",
+   "nextFollowUp": "2026-11-09"
+  },
+  {
+   "id": "t74",
+   "task": "Task 74",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Normal Person",
+   "nextFollowUp": "",
+   "isOverdue": true
+  },
+  {
+   "id": "t75",
+   "task": "Task 75",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Normal Person",
+   "nextFollowUp": "",
+   "isOverdue": false
+  },
+  {
+   "id": "t76",
+   "task": "Task 76",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Normal Person",
+   "nextFollowUp": "",
+   "isOverdue": false
+  },
+  {
+   "id": "t77",
+   "task": "Task 77",
+   "status": "Dropped",
+   "priority": "P2",
+   "assignedTo": "Normal Person",
+   "nextFollowUp": "2026-01-01"
+  },
+  {
+   "id": "t78",
+   "task": "Task 78",
+   "status": "Pending",
+   "priority": "P1",
+   "assignedTo": "Shared Person, Normal Person",
+   "nextFollowUp": "2026-11-05"
+  },
+  {
+   "id": "t79",
+   "task": "Task 79",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t80",
+   "task": "Task 80",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "  ,  ",
+   "nextFollowUp": ""
+  },
+  {
+   "id": "t81",
+   "task": "Task 81",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "Free Text Name",
+   "nextFollowUp": "",
+   "archivedAt": "2026-11-01T12:00:00Z"
+  },
+  {
+   "id": "t82",
+   "task": "Task 82",
+   "status": "Pending",
+   "priority": "P2",
+   "assignedTo": "shared person",
+   "nextFollowUp": ""
+  }
+ ]
+}
