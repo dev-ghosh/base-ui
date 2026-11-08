@@ -214,8 +214,8 @@ named in the plan are routes in sections 3-6. The rest:
 | `mo-cf`, `mo-lf`, `mo-ef`, `mo-guest` | `openAddContact`/`openContactEdit`, `openAddLead`/`openLeadEdit`, `openAddEvent`/`openEventEdit`, `openAddGuest` | overlay-state | Forms stay as component state (C7). The top-bar "New" menu offers Task, Contact, Lead, Event. |
 | `mo-del`, `mo-dedup` | delete confirmation, duplicate warning | overlay-state | |
 | `mo-user` | sign-in modal | replaced by `/login` | |
-| `mo-pair` ("Sign in another device") | account/profile/help | overlay-state | Shows a QR to sign another device in. |
-| `mo-access` ("Access") | sidebar "Manage access" (admin only), `openAccess()` | overlay-state | Admin only. Not in spec section 6; whether it deserves a route is **to confirm**. |
+| `mo-pair` ("Sign in another device") | account/profile/help | overlay-state | Shows a QR to sign another device in. Built (Task 16): mounted in the `(app)` layout (`PairOverlay`); opened from Profile > Security, Help (`/profile?pair=1`) and any `/profile?pair=1` link. The old account menu had no such item, so none was added. |
+| `mo-access` ("Access") | sidebar "Manage access" (admin only), `openAccess()` | overlay-state | Admin only. Not in spec section 6. Ruling R32: stays an overlay (no route); built in Task 16 as `AccessModal` in the `(app)` layout; `openAccess()` refuses non-admins. |
 | `mo-workload` ("Team Capacity & Workload Balance") | sidebar "Team workload", `renderWorkloadPanel()` | overlay-state | Sidebar item with no panel of its own. |
 | `mo-activity` ("Real-time Activity Timeline") | sidebar "Activity", `renderActivityFeedPanel()` | overlay-state | Same. |
 | `mo-smart-search` ("Smart Search & Filter Presets") | top-bar search pill, Ctrl+K | overlay-state | Saved filters (`saved-filters.js`). |
