@@ -4,11 +4,13 @@
 // the owning task replaces a body, each is a named no-op, exactly like the buttons in the
 // header that wait for their task.
 
-// TODO(Task 13): toast notifications (js/notifications.js pushNotification)
-export function pushNotification(_title, _message, _type = 'info') {}
+// Toast notifications (js/notifications.js pushNotification) are real now: features/notifications (Task 13).
+// pushNotification(title, message, type = 'info') draws in <ToastHost>, mounted in the (app) layout.
+export { pushNotification } from '../features/notifications/toasts.js';
 
 // The activity feed (js/activity.js recordActivity) is real now: src/lib/activity.js (Task 14).
 export { recordActivity } from './activity.js';
+
 
 // TODO(Task 13): the alerts panel (js/notifications.js openAlertsPanel), opened by the bell and by Help's
 // "Open Alerts", with the unread badge on #notif-btn

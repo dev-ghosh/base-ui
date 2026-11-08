@@ -11,6 +11,7 @@ import { SignOutProvider } from '@/hooks/useSignOut.jsx';
 import AccessModal from '@/features/access/AccessModal.jsx';
 import ActivityModal from '@/features/activity/ActivityModal.jsx';
 import PairOverlay from '@/features/auth/PairOverlay.jsx';
+import ToastHost from '@/features/notifications/ToastHost.jsx';
 import TourOverlay from '@/features/help/TourOverlay.jsx';
 import { EventFormProvider } from '@/features/events/EventFormProvider.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
@@ -108,6 +109,8 @@ export default function AppLayout({ children, modal }) {
           <PairOverlay />
           {/* The guided tour (started from Help and Profile > Security). */}
           <TourOverlay />
+          {/* The toast corner. */}
+          <ToastHost />
         </div>
         </EventFormProvider>
        </ContactFormProvider>

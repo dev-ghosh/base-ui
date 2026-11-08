@@ -6,6 +6,7 @@
 import { store, createInitialState } from '../store/store.js';
 import { clearActivity } from './activity.js';
 import { clearCache, currentUserId } from './data-cache.js';
+import { clearToasts } from '../features/notifications/toasts.js';
 
 // Bumped every time a session ends. A load remembers the value it started under.
 let generation = 0;
@@ -34,6 +35,7 @@ export function onSessionEnded() {
   generation += 1;
   clearCache();
   clearActivity();   // the Activity stream holds task titles and people: it goes with the session too
+  clearToasts();     // toasts name tasks and people: they go with the session
   const initial = createInitialState();
   const patch = {};
   for (const k of DATA_KEYS) patch[k] = initial[k];
