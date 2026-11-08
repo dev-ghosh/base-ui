@@ -75,6 +75,19 @@ export function createInitialState() {
     // leads tab data (pipeline of applications & ongoing conversations)
     leads: [],
 
+    // Team directory (employees). Loaded when the Team screen opens, not at boot (as the old loadTeam).
+    // teamLoaded: a load has succeeded; teamError: null | 'missing' (migration not applied) | the message.
+    employees: [],
+    teamLoaded: false,
+    teamError: null,
+
+    // Expenses: cards and expenses rows (RLS: an admin sees all, everyone else their own). Loaded when
+    // the Expenses screen opens, not at boot (as the old loadExpenses).
+    cards: [],
+    expenses: [],
+    expensesLoaded: false,
+    expError: null,
+
     // current user (display name for created_by/updated_by)
     // From rie_my_access(): {email, display_name, role, can_write, is_admin}.
     // null until it resolves, which means "not known yet", never "denied".
