@@ -4,6 +4,7 @@
 // (auth.clearSession) and when a different person's session replaces another's
 // (auth.decodeSession). Plain JS, relative imports, importable in Node.
 import { store, createInitialState } from '../store/store.js';
+import { clearActivity } from './activity.js';
 import { clearCache, currentUserId } from './data-cache.js';
 
 // Bumped every time a session ends. A load remembers the value it started under.
@@ -31,6 +32,7 @@ export function isCurrentLoad(token) {
 export function onSessionEnded() {
   generation += 1;
   clearCache();
+  clearActivity();   // the Activity stream holds task titles and people: it goes with the session too
   const initial = createInitialState();
   const patch = {};
   for (const k of DATA_KEYS) patch[k] = initial[k];

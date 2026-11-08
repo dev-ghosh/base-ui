@@ -5,15 +5,15 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
 import { identityOf } from '../lib/identity.js';
+import { openMo } from '../lib/modals.js';
 import { ADMIN_ITEM, FOOT_ITEMS, NAV_SECTIONS, PROFILE_ITEM, navKeyForPath } from '../lib/nav.js';
 import { closeSidebarIfMobile, initSidebar, sidebarStore } from '../lib/sidebar.js';
 
-// Overlays the sidebar opens. They are not pages (docs/route-inventory.md section 9);
-// the features behind them are built in later tasks, so these are named no-ops.
-// TODO(unassigned in the plan): Team workload (mo-workload, renderWorkloadPanel)
-function openWorkloadPanel() {}
-// TODO(unassigned in the plan): Activity (mo-activity, renderActivityFeedPanel)
-function openActivityPanel() {}
+// Overlays the sidebar opens. They are not pages (docs/route-inventory.md section 9). Team workload and
+// Activity are modals mounted in the (app) layout (features/workload, features/activity); the others
+// are built in later tasks, so theirs is a named no-op.
+const openWorkloadPanel = () => openMo('mo-workload');
+const openActivityPanel = () => openMo('mo-activity');
 // TODO(Task 16): Manage access (mo-access, openAccess), admins only
 function openAccessOverlay() {}
 const OVERLAYS = { workload: openWorkloadPanel, activity: openActivityPanel, access: openAccessOverlay };

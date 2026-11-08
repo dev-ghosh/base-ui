@@ -7,8 +7,8 @@
 // TODO(Task 13): toast notifications (js/notifications.js pushNotification)
 export function pushNotification(_title, _message, _type = 'info') {}
 
-// TODO(Task 13): the activity feed (js/activity.js recordActivity)
-export function recordActivity(_action, _target, _person, _type = 'task') {}
+// The activity feed (js/activity.js recordActivity) is real now: src/lib/activity.js (Task 14).
+export { recordActivity } from './activity.js';
 
 // TODO(Task 13): the Escalate dialog (js/escalations.js openEscalateModal)
 export function openEscalateModal(_taskId) {}

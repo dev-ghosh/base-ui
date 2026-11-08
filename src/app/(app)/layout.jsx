@@ -7,10 +7,12 @@ import { useAccess, useAccessMode } from '@/hooks/useAccess.js';
 import { useDataLoader } from '@/hooks/useDataLoader.js';
 import { useRealtime } from '@/hooks/useRealtime.js';
 import { useSession } from '@/hooks/useSession.js';
+import ActivityModal from '@/features/activity/ActivityModal.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
 import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
 import SmartSearch from '@/features/search/SmartSearch.jsx';
 import { TaskFormProvider } from '@/features/tasks/TaskFormProvider.jsx';
+import WorkloadModal from '@/features/workload/WorkloadModal.jsx';
 import { resetAccess } from '@/lib/access.js';
 import { resolveLegacyUrl } from '@/lib/legacy-urls.js';
 import { hideSplash, showSplash } from '@/lib/splash.js';
@@ -89,6 +91,9 @@ export default function AppLayout({ children, modal }) {
           </div>
           {modal}
           <SmartSearch />
+          {/* Sidebar overlays: Team workload (mo-workload) and Activity (mo-activity). */}
+          <WorkloadModal />
+          <ActivityModal />
         </div>
        </ContactFormProvider>
       </LeadFormProvider>
