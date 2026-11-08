@@ -10,6 +10,7 @@ import { useSession } from '@/hooks/useSession.js';
 import { SignOutProvider } from '@/hooks/useSignOut.jsx';
 import AccessModal from '@/features/access/AccessModal.jsx';
 import ActivityModal from '@/features/activity/ActivityModal.jsx';
+import PairOverlay from '@/features/auth/PairOverlay.jsx';
 import TourOverlay from '@/features/help/TourOverlay.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
 import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
@@ -100,6 +101,8 @@ export default function AppLayout({ children, modal }) {
           <ActivityModal />
           {/* Manage access (mo-access, admins only; openAccess() refuses anyone else). */}
           <AccessModal />
+          {/* Sign in another device (mo-pair): opened from Profile > Security, Help and /profile?pair=1. */}
+          <PairOverlay />
           {/* The guided tour (started from Help and Profile > Security). */}
           <TourOverlay />
         </div>
