@@ -1,8 +1,5 @@
-'use client';
-
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
-
-// Placeholder: a later task replaces this with the real screen.
+// The screen is drawn by escalations/layout.jsx (it is shared by the four sub-views); this segment only
+// selects the tab.
 export default function Page() {
-  return <PagePlaceholder title="Escalations: Closed" />;
+  return null;
 }

@@ -4,6 +4,7 @@ import { Fragment, useEffect, useSyncExternalStore } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Icon } from './Icon.jsx';
 import { useAccess } from '../hooks/useAccess.js';
+import NavBadge from '../features/escalations/NavBadge.jsx';
 import { useAvatarColour } from '../features/profile/hooks/usePrefs.js';
 import { openAccess } from '../lib/access-admin.js';
 import { identityOf } from '../lib/identity.js';
@@ -55,7 +56,7 @@ export default function Sidebar({ session }) {
       >
         <span className="nv-ic" data-icon={it.icon}><Icon name={it.icon} /></span>
         <span className="nv-t">{it.label}</span>
-        {it.badge && <span className="nv-badge" data-badge={it.badge} hidden></span>}
+        {it.badge && <NavBadge kind={it.badge} />}
       </button>
     );
   };

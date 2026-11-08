@@ -6,6 +6,7 @@
 import { store, createInitialState } from '../store/store.js';
 import { clearActivity } from './activity.js';
 import { clearCache, currentUserId } from './data-cache.js';
+import { resetAdminCodes } from './escalation-actions.js';
 import { resetAlertsSession } from '../features/notifications/alerts.js';
 import { clearToasts } from '../features/notifications/toasts.js';
 
@@ -16,7 +17,7 @@ let generation = 0;
 const DATA_KEYS = [
   'contacts', 'events', 'guests', 'tasks', 'workstreams', 'actions', 'entityLinks',
   'entities', 'fronts', 'people', 'coOwners', 'initiatives', 'candidates', 'decisions',
-  'cleanups', 'decideRows', 'decideLoaded', 'decideSweep', 'leads', 'entityEvents', 'escalations', 'escalationsError', 'dataLoaded',
+  'cleanups', 'decideRows', 'decideLoaded', 'decideSweep', 'leads', 'entityEvents', 'escalations', 'escalationsError', 'escalationsLoaded', 'dataLoaded',
   'employees', 'teamLoaded', 'teamError', 'cards', 'expenses', 'expensesLoaded', 'expError',
   'prefs', 'prefsRemote',   // job title and phone: the person's, and gone with them
 ];
@@ -38,6 +39,7 @@ export function onSessionEnded() {
   clearActivity();   // the Activity stream holds task titles and people: it goes with the session too
   clearToasts();     // toasts name tasks and people; announced alerts and the open panel are the last person's
   resetAlertsSession();
+  resetAdminCodes();
   const initial = createInitialState();
   const patch = {};
   for (const k of DATA_KEYS) patch[k] = initial[k];

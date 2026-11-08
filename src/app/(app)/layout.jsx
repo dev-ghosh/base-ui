@@ -14,6 +14,8 @@ import PairOverlay from '@/features/auth/PairOverlay.jsx';
 import AlertsPanel from '@/features/notifications/AlertsPanel.jsx';
 import ToastHost from '@/features/notifications/ToastHost.jsx';
 import TourOverlay from '@/features/help/TourOverlay.jsx';
+import EscActionModal from '@/features/escalations/EscActionModal.jsx';
+import EscalateModal from '@/features/escalations/EscalateModal.jsx';
 import { EventFormProvider } from '@/features/events/EventFormProvider.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
 import { LeadFormProvider } from '@/features/pipeline/LeadFormProvider.jsx';
@@ -110,6 +112,9 @@ export default function AppLayout({ children, modal }) {
           <PairOverlay />
           {/* The guided tour (started from Help and Profile > Security). */}
           <TourOverlay />
+          {/* Escalate a task (mo-escalate) and Resolve / Escalate further / Withdraw (mo-esc-action). */}
+          <EscalateModal />
+          <EscActionModal />
           {/* The bell's slide-over (alerts, assigned to me only) and the toast corner. */}
           <AlertsPanel />
           <ToastHost />

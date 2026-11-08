@@ -73,6 +73,9 @@ export function createInitialState() {
     escalations: [],
     // null | 'missing' (migration not applied) | the message of a failed load
     escalationsError: null,
+    // true once the escalations load has ended (rows, or an error): the Escalations index waits for it before
+    // choosing between "Waiting on me" and "All open".
+    escalationsLoaded: false,
 
     // leads tab data (pipeline of applications & ongoing conversations)
     leads: [],

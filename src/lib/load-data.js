@@ -29,11 +29,11 @@ export async function loadEscalations(token = beginLoad()) {
   try {
     const rows = await sbGet('escalations', 'order=created_at.desc&limit=500');
     if (!isCurrentLoad(token)) return;
-    store.setState({ escalations: Array.isArray(rows) ? rows : [], escalationsError: null });
+    store.setState({ escalations: Array.isArray(rows) ? rows : [], escalationsError: null, escalationsLoaded: true });
   } catch (e) {
     if (!isCurrentLoad(token)) return;
     const missing = /404|42P01|relation|PGRST205|schema cache/i.test(e?.message || '');
-    store.setState({ escalationsError: missing ? 'missing' : (e?.message || String(e)) });
+    store.setState({ escalationsError: missing ? 'missing' : (e?.message || String(e)), escalationsLoaded: true });
   }
 }
 
@@ -136,11 +136,12 @@ export async function loadData() {
       for (const k of CACHED_LISTS) restored[k] = cache[k] || [];
       restored.people = cache.people || store.getState().people || [];
       restored.dataLoaded = true;
+      restored.escalationsLoaded = true;   // not cached: the page shows what it has instead of waiting forever
       store.setState(restored);
       setStatus('online', `Showing cached data (${cacheAgeMinutes(cache)}m ago)`);
       announceAfterLoad();
     } else {
-      store.setState({ dataLoaded: true });   // nothing arrived and nothing is cached: the lists really are empty
+      store.setState({ dataLoaded: true, escalationsLoaded: true });   // nothing arrived and nothing is cached: the lists really are empty
       setStatus('error', 'Could not load data: ' + (e?.message || e));
     }
     return false;   // cache or nothing: not a successful sync

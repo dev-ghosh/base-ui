@@ -15,8 +15,9 @@ export { recordActivity } from './activity.js';
 // real now: <AlertsPanel> in the (app) layout, with the unread badge on #notif-btn (Task 13).
 export { openAlertsPanel } from '../features/notifications/alerts.js';
 
-// TODO(Task 13): the Escalate dialog (js/escalations.js openEscalateModal)
-export function openEscalateModal(_taskId) {}
+// The Escalate dialog (js/escalations.js openEscalateModal(taskId)) is real now: <EscalateModal> in the (app)
+// layout (Task 13). With a task id the task is fixed; without one the person picks.
+export { openEscalateModal } from '../features/escalations/escalate-state.js';
 
 // Turn a task into a lead (js/leads.js convertTaskToLead), the Board card's chart button. The lead
 // form lives in LeadFormProvider (mounted in the (app) layout), which registers itself here while it
