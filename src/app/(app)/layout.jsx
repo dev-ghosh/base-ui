@@ -7,6 +7,8 @@ import { useAccess, useAccessMode } from '@/hooks/useAccess.js';
 import { useDataLoader } from '@/hooks/useDataLoader.js';
 import { useRealtime } from '@/hooks/useRealtime.js';
 import { useSession } from '@/hooks/useSession.js';
+import { SignOutProvider } from '@/hooks/useSignOut.jsx';
+import AccessModal from '@/features/access/AccessModal.jsx';
 import ActivityModal from '@/features/activity/ActivityModal.jsx';
 import TourOverlay from '@/features/help/TourOverlay.jsx';
 import { ContactFormProvider } from '@/features/contacts/ContactFormProvider.jsx';
@@ -78,6 +80,7 @@ export default function AppLayout({ children, modal }) {
   // New > Task, the task viewer's Edit and the lead screens all open it. LeadFormProvider does the same for the lead form (#mo-lf)
   // and ContactFormProvider for the contact form (#mo-cf), its duplicate dialog and the delete confirmation.
   return (
+    <SignOutProvider signOut={signOut}>
     <TaskFormProvider>
       <LeadFormProvider>
        <ContactFormProvider>
@@ -95,11 +98,14 @@ export default function AppLayout({ children, modal }) {
           {/* Sidebar overlays: Team workload (mo-workload) and Activity (mo-activity). */}
           <WorkloadModal />
           <ActivityModal />
+          {/* Manage access (mo-access, admins only; openAccess() refuses anyone else). */}
+          <AccessModal />
           {/* The guided tour (started from Help and Profile > Security). */}
           <TourOverlay />
         </div>
        </ContactFormProvider>
       </LeadFormProvider>
     </TaskFormProvider>
+    </SignOutProvider>
   );
 }
