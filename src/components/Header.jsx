@@ -14,7 +14,10 @@ import { exportToExcel } from '../lib/export-excel.js';
 import { identityOf } from '../lib/identity.js';
 import { menuStore, setMenu, toggleHeaderMenu } from '../lib/menus.js';
 import { openMo } from '../lib/modals.js';
-import { openAlertsPanel } from '../lib/seams.js';
+import { useAlertState } from '../hooks/useAlerts.js';
+import { alertsUi, myCode, openAlertsPanel } from '../features/notifications/alerts.js';
+import { badgeText } from '../features/notifications/model.js';
+import { useStore } from '../store/useStore.js';
 import { titleForPath } from '../lib/nav.js';
 import { sidebarStore, toggleMenu } from '../lib/sidebar.js';
 import { THEMES } from '../lib/theme.js';
@@ -46,6 +49,9 @@ export default function Header({ session, onSignOut }) {
   const menu = useSyncExternalStore(menuStore.subscribe, () => menuStore.getState().menu, () => null);
   const me = identityOf(session, access);
   const avatarColour = useAvatarColour();
+  // The bell: the number of unread alerts (assigned to me only), and whether the panel is open.
+  const { unread } = useAlertState(useStore((s) => myCode(s)));
+  const alertsOpen = useSyncExternalStore(alertsUi.subscribe, () => alertsUi.getState().open, () => false);
 
   const toggle = toggleHeaderMenu;
   const cls = (name, extra) => 'menu menu-r' + (extra ? ' ' + extra : '') + (menu === name ? ' open' : '');
@@ -111,9 +117,18 @@ export default function Header({ session, onSignOut }) {
           </div>
         </div>
 
-        <button type="button" className="icon-round" id="notif-btn" onClick={openAlertsPanel} aria-label="Alerts" aria-haspopup="dialog" aria-expanded="false" title="Alerts for you">
+        <button
+          type="button"
+          className={'icon-round' + (unread > 0 ? ' has-alerts' : '')}
+          id="notif-btn"
+          onClick={openAlertsPanel}
+          aria-label="Alerts"
+          aria-haspopup="dialog"
+          aria-expanded={String(alertsOpen)}
+          title="Alerts for you"
+        >
           <span data-icon="bell" data-size="19"><Icon name="bell" size={19} /></span>
-          <span className="dot-badge" data-badge="alerts" hidden></span>
+          <span className="dot-badge" data-badge="alerts" hidden={unread === 0}>{badgeText(unread)}</span>
         </button>
 
         <div className="menu-wrap">

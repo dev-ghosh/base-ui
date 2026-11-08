@@ -2,9 +2,9 @@
 // syncData() in rie-dashboard2/js/app.js. Plain JS with relative imports so plain
 // Node can run it.
 //
-// Left to the screens that own them (they were part of the old loadData but belong
-// to later tasks): the task_functions registry (matrix), the seen-task/alert bookkeeping, and the
-// one-time tour toast (needs the toast of Task 13).
+// Left to the screens that own them: the task_functions registry (matrix). The seen-task bookkeeping and
+// the alert announcement (one summary toast, features/notifications) runs here, as in the old loadData; the
+// one-time "New to BASE?" tour offer is a later piece.
 import { store } from '../store/store.js';
 import { getStorage } from './config.js';
 import { sbGet, safeGet } from './rest.js';
@@ -16,6 +16,7 @@ import { setStatus } from './status.js';
 import { readCache, writeCache, cacheAgeMinutes, CACHED_LISTS } from './data-cache.js';
 import { beginLoad, isCurrentLoad } from './user-data.js';
 import { loadPrefs } from './prefs.js';
+import { announceAfterLoad, syncSeenTasks } from '../features/notifications/alerts.js';
 
 /**
  * The escalations rows (newest 500), kept as raw rows in store.escalations. Port of loadEscalations() in
@@ -121,6 +122,11 @@ export async function loadData() {
     );
     // Per-person data, after the lists (the old loadData awaited loadEscalations() and loadPrefs() here).
     await Promise.all([loadEscalations(token), loadPrefs(token)]);
+    if (!isCurrentLoad(token)) return false;
+    // Alerts are derived from the tasks and escalations just loaded: baseline what I already own the first
+    // time on this device, then toast what is new (the first load of a session gives one summary).
+    syncSeenTasks();
+    announceAfterLoad();
     return true;
   } catch (e) {
     if (!isCurrentLoad(token)) return false;
@@ -132,6 +138,7 @@ export async function loadData() {
       restored.dataLoaded = true;
       store.setState(restored);
       setStatus('online', `Showing cached data (${cacheAgeMinutes(cache)}m ago)`);
+      announceAfterLoad();
     } else {
       store.setState({ dataLoaded: true });   // nothing arrived and nothing is cached: the lists really are empty
       setStatus('error', 'Could not load data: ' + (e?.message || e));

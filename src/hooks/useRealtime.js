@@ -6,6 +6,7 @@ import { initRealtime, destroyRealtime } from '../lib/realtime.js';
 import { applyRealtimeBatch, REALTIME_BATCH_MS } from '../lib/apply-realtime.js';
 import { syncData } from '../lib/load-data.js';
 import { writeCache } from '../lib/data-cache.js';
+import { announceNewAlerts } from '../features/notifications/alerts.js';
 
 /**
  * Live updates while signed in (and the access answer is in, like the data
@@ -31,8 +32,10 @@ export function useRealtime(signedIn) {
       const { result, changed } = applyRealtimeBatch(batch);
       if (result === 'resync') {
         syncData().catch((e) => console.warn('syncData failed:', e));
-      } else if (changed) {
-        writeCache();
+      } else {
+        if (changed) writeCache();
+        // Work that just became mine (assigned, escalated to me) toasts once; everyone else hears nothing.
+        announceNewAlerts();
       }
     };
 

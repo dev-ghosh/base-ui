@@ -11,10 +11,9 @@ export { pushNotification } from '../features/notifications/toasts.js';
 // The activity feed (js/activity.js recordActivity) is real now: src/lib/activity.js (Task 14).
 export { recordActivity } from './activity.js';
 
-
-// TODO(Task 13): the alerts panel (js/notifications.js openAlertsPanel), opened by the bell and by Help's
-// "Open Alerts", with the unread badge on #notif-btn
-export function openAlertsPanel() {}
+// The alerts panel (js/notifications.js openAlertsPanel), opened by the bell and by Help's "Open Alerts", is
+// real now: <AlertsPanel> in the (app) layout, with the unread badge on #notif-btn (Task 13).
+export { openAlertsPanel } from '../features/notifications/alerts.js';
 
 // TODO(Task 13): the Escalate dialog (js/escalations.js openEscalateModal)
 export function openEscalateModal(_taskId) {}
