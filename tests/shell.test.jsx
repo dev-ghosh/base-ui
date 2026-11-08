@@ -423,10 +423,18 @@ describe('header and account menu', () => {
       expect(document.getElementById(id), id).not.toBeNull();
     }
     expect([...document.querySelectorAll('#new-menu button')].map((b) => b.textContent)).toEqual(['Task', 'Contact', 'Lead', 'Event']);
-    // stubs for later tasks do not throw
+    // The bell opens the alerts panel; the toast corner and the escalation dialogs are mounted by the shell.
+    for (const id of ['alerts-panel', 'alerts-scrim', 'rie-toast-container', 'mo-escalate', 'mo-esc-action']) {
+      expect(document.getElementById(id), id).not.toBeNull();
+    }
     fireEvent.click(document.getElementById('search-btn'));
-    fireEvent.click(document.getElementById('sync-btn'));
     fireEvent.click(document.getElementById('notif-btn'));
+    expect(document.getElementById('alerts-panel').classList.contains('open')).toBe(true);
+    // The sidebar's Escalations item carries its count badge (hidden while nothing waits on the person).
+    const badge = document.querySelector('#side [data-nav="escalations"] .nv-badge[data-badge="escalations"]');
+    expect(badge).not.toBeNull();
+    expect(badge.hidden).toBe(true);
+    fireEvent.click(document.getElementById('sync-btn'));
   });
 });
 

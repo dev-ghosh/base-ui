@@ -8,6 +8,7 @@ import { clearActivity } from './activity.js';
 import { clearCache, currentUserId } from './data-cache.js';
 import { resetAdminCodes } from './escalation-actions.js';
 import { resetAlertsSession } from '../features/notifications/alerts.js';
+import { cancelTourOffer } from '../features/help/tour-offer.js';
 import { clearToasts } from '../features/notifications/toasts.js';
 
 // Bumped every time a session ends. A load remembers the value it started under.
@@ -39,6 +40,7 @@ export function onSessionEnded() {
   clearActivity();   // the Activity stream holds task titles and people: it goes with the session too
   clearToasts();     // toasts name tasks and people; announced alerts and the open panel are the last person's
   resetAlertsSession();
+  cancelTourOffer();
   resetAdminCodes();
   const initial = createInitialState();
   const patch = {};

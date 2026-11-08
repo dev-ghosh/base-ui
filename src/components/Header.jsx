@@ -17,15 +17,11 @@ import { openMo } from '../lib/modals.js';
 import { useAlertState } from '../hooks/useAlerts.js';
 import { alertsUi, myCode, openAlertsPanel } from '../features/notifications/alerts.js';
 import { badgeText } from '../features/notifications/model.js';
+import { syncNow, syncStore } from '../lib/sync.js';
 import { useStore } from '../store/useStore.js';
 import { titleForPath } from '../lib/nav.js';
 import { sidebarStore, toggleMenu } from '../lib/sidebar.js';
 import { THEMES } from '../lib/theme.js';
-
-// Buttons whose features are built in later tasks. They exist so the bar looks and
-// tabs as before; each is a named no-op until its task replaces it.
-// TODO(Task 7): syncNow(): re-read access and data and redraw, without a reload
-function syncNow() {}
 
 /**
  * The top bar (`header.topbar` in the old index.html): menu button, page title, search
@@ -52,6 +48,7 @@ export default function Header({ session, onSignOut }) {
   // The bell: the number of unread alerts (assigned to me only), and whether the panel is open.
   const { unread } = useAlertState(useStore((s) => myCode(s)));
   const alertsOpen = useSyncExternalStore(alertsUi.subscribe, () => alertsUi.getState().open, () => false);
+  const syncing = useSyncExternalStore(syncStore.subscribe, () => syncStore.getState().busy, () => false);
 
   const toggle = toggleHeaderMenu;
   const cls = (name, extra) => 'menu menu-r' + (extra ? ' ' + extra : '') + (menu === name ? ' open' : '');
@@ -92,7 +89,15 @@ export default function Header({ session, onSignOut }) {
         </button>
 
         {/* Sync: re-read access and data and redraw this page, without a browser reload. */}
-        <button type="button" className="icon-round" id="sync-btn" onClick={syncNow} aria-label="Sync now" title="Sync: get the latest without reloading">
+        <button
+          type="button"
+          className={'icon-round' + (syncing ? ' spinning' : '')}
+          id="sync-btn"
+          onClick={() => syncNow(pathname)}
+          aria-label="Sync now"
+          aria-busy={syncing ? 'true' : undefined}
+          title="Sync: get the latest without reloading"
+        >
           <span data-icon="refresh" data-size="19"><Icon name="refresh" size={19} /></span>
         </button>
 
@@ -158,7 +163,7 @@ export default function Header({ session, onSignOut }) {
             <button type="button" role="menuitem" onClick={() => go('/profile/notifications')}>Notification settings</button>
             <button type="button" role="menuitem" onClick={() => go('/help')}>Help &amp; tools</button>
             <div className="menu-sep">Data</div>
-            <button type="button" role="menuitem" onClick={() => { setMenu(null); syncNow(); }}>Sync now</button>
+            <button type="button" role="menuitem" onClick={() => { setMenu(null); syncNow(pathname); }}>Sync now</button>
             <button type="button" role="menuitem" onClick={() => { setMenu(null); exportToExcel(); }}>Export to Excel</button>
             <div className="menu-sep"></div>
             <button type="button" role="menuitem" className="um-out" onClick={() => { setMenu(null); onSignOut(); }}>Sign out</button>

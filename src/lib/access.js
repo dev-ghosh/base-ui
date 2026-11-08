@@ -82,6 +82,26 @@ export function loadMyAccess() {
   return run;
 }
 
+/**
+ * Ask again, now (the Sync button): a role, company or scope change shows up without a reload. Unlike
+ * resetAccess() it never flips `accessLoaded` back, so the shell stays on screen while the answer is
+ * fetched. Like the first ask it fails CLOSED (an error leaves `access` null = read-only; the old
+ * loadMyAccess() did the same on every call). An answer that arrives after a sign-out is dropped.
+ */
+export async function refreshMyAccess() {
+  const mine = generation;
+  let access = null;
+  try {
+    const rows = await sbRpc('rie_my_access', {});
+    access = Array.isArray(rows) ? rows[0] || null : rows || null;
+  } catch {
+    access = null;
+  }
+  if (mine !== generation) return null;
+  store.setState({ access, accessLoaded: true });
+  return access;
+}
+
 /** Forget the answer (sign-out), so the next sign-in asks again. */
 export function resetAccess() {
   generation += 1;

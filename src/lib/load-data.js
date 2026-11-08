@@ -3,8 +3,8 @@
 // Node can run it.
 //
 // Left to the screens that own them: the task_functions registry (matrix). The seen-task bookkeeping and
-// the alert announcement (one summary toast, features/notifications) runs here, as in the old loadData; the
-// one-time "New to BASE?" tour offer is a later piece.
+// the alert announcement (one summary toast, features/notifications) and the one-time "New to BASE?" tour
+// offer (features/help/tour-offer.js) run here, as in the old loadData.
 import { store } from '../store/store.js';
 import { getStorage } from './config.js';
 import { sbGet, safeGet } from './rest.js';
@@ -17,6 +17,7 @@ import { readCache, writeCache, cacheAgeMinutes, CACHED_LISTS } from './data-cac
 import { beginLoad, isCurrentLoad } from './user-data.js';
 import { loadPrefs } from './prefs.js';
 import { announceAfterLoad, syncSeenTasks } from '../features/notifications/alerts.js';
+import { offerTourOnce } from '../features/help/tour-offer.js';
 
 /**
  * The escalations rows (newest 500), kept as raw rows in store.escalations. Port of loadEscalations() in
@@ -127,6 +128,7 @@ export async function loadData() {
     // time on this device, then toast what is new (the first load of a session gives one summary).
     syncSeenTasks();
     announceAfterLoad();
+    offerTourOnce();
     return true;
   } catch (e) {
     if (!isCurrentLoad(token)) return false;
