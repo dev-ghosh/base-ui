@@ -320,3 +320,10 @@ These settle every item marked "to confirm" above. Spec C7 is the authority; eac
     `/pipeline/:id`, which would also match `/pipeline/board`). Events (`/events/[id]`, no static siblings),
     `/work/tasks/[id]` and `/work/initiatives/[id]` keep their paths. Each has its intercepting twin
     `@modal/(.)pipeline/leads/[id]` and `@modal/(.)contacts/people/[id]`.
+11. **Team, Expenses and HR automation (Task 15).** `/team` forwards (client-side) to `/team/table` when the old
+    `localStorage['rie_team_view']` says `table`, else to `/team/cards`; the Cards / Table buttons keep the key in sync
+    (`grid` | `table`) and carry the filters. Team filters are the search params `q`, `dept`, `company`, `status`
+    (a missing `status` means Active, `status=any` means Any status). Expenses is one page: `month` (`YYYY-MM` or
+    `all`; missing = this month), `card` (an id or `none`), `category`, `person`, `status`. The employee dialog, the
+    expense form and the cards manager are component state. A team member's open task opens `/work/tasks/[id]`.
+    `/hr-automation` is the iframe of `NEXT_PUBLIC_HR_AUTOMATION_URL`.
