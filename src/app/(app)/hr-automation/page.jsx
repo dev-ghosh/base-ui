@@ -1,8 +1,8 @@
 'use client';
 
-import PagePlaceholder from '@/components/PagePlaceholder.jsx';
+import HrFrame from '@/features/hr/HrFrame.jsx';
 
-// Placeholder: a later task replaces this with the real screen.
+// /hr-automation: the HR automation app in an iframe (spec C14).
 export default function Page() {
-  return <PagePlaceholder title="HR automation" />;
+  return <HrFrame />;
 }
