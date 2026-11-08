@@ -71,6 +71,8 @@ export function createInitialState() {
     entityEvents: [],
     // escalations rows. Filled by the escalations loader; realtime folds single rows into it.
     escalations: [],
+    // null | 'missing' (migration not applied) | the message of a failed load
+    escalationsError: null,
 
     // leads tab data (pipeline of applications & ongoing conversations)
     leads: [],

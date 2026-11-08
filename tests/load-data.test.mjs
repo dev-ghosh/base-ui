@@ -70,6 +70,7 @@ const expected = [
   'entity_links?link_type=eq.contains&select=parent_id,child_id',
   'entity_owners?removed_at=is.null&select=entity_id,person_code',
   'entity_events?order=created_at.desc&limit=60',
+  'escalations?order=created_at.desc&limit=500',   // after the lists, as the old loadData awaited loadEscalations()
 ];
 check(paths.length === expected.length, `${expected.length} requests are made (got ${paths.length})`);
 check(expected.every((p, i) => paths[i] === p), 'tables, queries and order match the old loadData');
@@ -195,7 +196,23 @@ mem.set('rie_cache_v3', 'old');
 calls.length = 0;
 await syncData();
 check(!mem.has('rie_cache_v3'), 'syncData removes rie_cache_v3');
-check(calls.length === 16, 'syncData reloads all endpoints');
+check(calls.length === 17, 'syncData reloads all endpoints');
+
+// ---- escalations: raw rows into store.escalations (Analytics counts the open ones) ----
+reset();
+rows = { escalations: [{ id: 1, status: 'open' }, { id: 2, status: 'closed' }] };
+await loadData();
+check(store.getState().escalations.length === 2 && store.getState().escalations[0].status === 'open', 'escalations rows are in the store');
+check(store.getState().escalationsError === null, 'no escalations error');
+reset();
+failing = { escalations: 404 };
+check(await loadData() === true, 'a missing escalations table does not fail the load');
+check(store.getState().escalationsError === 'missing' && store.getState().dataLoaded, 'a missing escalations table is reported as "missing"');
+reset();
+failing = { escalations: 500 };
+await loadData();
+check(/500/.test(store.getState().escalationsError || ''), 'another escalations failure keeps its message');
+check(store.getState().tasks !== undefined && store.getState().dataLoaded, 'the other lists are unaffected');
 
 // ---- R25: the cache never leaks between people ----
 reset();

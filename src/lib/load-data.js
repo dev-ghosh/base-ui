@@ -3,7 +3,7 @@
 // Node can run it.
 //
 // Left to the screens that own them (they were part of the old loadData but belong
-// to later tasks): the task_functions registry (matrix), escalations and profile
+// to later tasks): the task_functions registry (matrix), profile
 // preferences, the seen-task/alert bookkeeping, and the one-time tour toast.
 import { store } from '../store/store.js';
 import { getStorage } from './config.js';
@@ -15,6 +15,25 @@ import {
 import { setStatus } from './status.js';
 import { readCache, writeCache, cacheAgeMinutes, CACHED_LISTS } from './data-cache.js';
 import { beginLoad, isCurrentLoad } from './user-data.js';
+
+/**
+ * The escalations rows (newest 500), kept as raw rows in store.escalations. Port of loadEscalations() in
+ * rie-dashboard2/js/escalations.js, which the old loadData() ran after the lists (Analytics counts the
+ * open ones; the Escalations screen is a later task). A missing table is reported in
+ * store.escalationsError ('missing'), any other failure by its message; neither throws.
+ * @param {object} [token] the load this belongs to (beginLoad()); its result is dropped when the session has ended
+ */
+export async function loadEscalations(token = beginLoad()) {
+  try {
+    const rows = await sbGet('escalations', 'order=created_at.desc&limit=500');
+    if (!isCurrentLoad(token)) return;
+    store.setState({ escalations: Array.isArray(rows) ? rows : [], escalationsError: null });
+  } catch (e) {
+    if (!isCurrentLoad(token)) return;
+    const missing = /404|42P01|relation|PGRST205|schema cache/i.test(e?.message || '');
+    store.setState({ escalationsError: missing ? 'missing' : (e?.message || String(e)) });
+  }
+}
 
 /**
  * Fetch everything and replace the store's lists.
@@ -99,6 +118,8 @@ export async function loadData() {
       'Connected',
       'Synced ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
     );
+    // Per-person data, after the lists (the old loadData awaited loadEscalations() here).
+    await loadEscalations(token);
     return true;
   } catch (e) {
     if (!isCurrentLoad(token)) return false;

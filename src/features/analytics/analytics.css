@@ -1,0 +1,11 @@
+/* The Analytics tabs are links (the tabs are routes), not buttons. The old stylesheet (shell.css,
+ * a verbatim copy) only styles `.shd-tabs button`; this gives `.shd-tabs a` the same look. */
+.shd-tabs a { display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border: 0; border-radius: var(--shd-rs); background: transparent; color: var(--txm);
+  font: 500 .8rem var(--font); cursor: pointer; white-space: nowrap; text-decoration: none; }
+.shd-tabs a:hover { color: var(--tx); }
+.shd-tabs a.on { background: var(--sf); color: var(--tx); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.shd a:focus-visible { outline: 2px solid var(--ac); outline-offset: 2px; }
+
+@media (max-width: 640px) {
+  .shd-tabs a { flex: 1 0 auto; justify-content: center; }
+}

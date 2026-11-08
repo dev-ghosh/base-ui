@@ -1,0 +1,50 @@
+{
+  "now": "2026-11-10T12:00:00Z",
+  "tasks": [
+    { "id": "t01", "task": "Overdue P1 shared", "status": "In Progress", "priority": "P1", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao, Ben Cole", "nextFollowUp": "2026-11-01", "createdAt": "2026-10-20T12:00:00Z", "updatedAt": "2026-11-09T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t02", "task": "Overdue P2", "status": "Pending", "priority": "P2", "company": "Acme", "func": "Sales", "assignedTo": "Asha Rao", "nextFollowUp": "2026-10-25", "createdAt": "2026-09-01T12:00:00Z", "updatedAt": "2026-10-01T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t03", "task": "Overdue P1 older", "status": "On Hold", "priority": "P1", "company": "Beta", "func": "Ops", "assignedTo": "Ben Cole", "nextFollowUp": "2026-10-30", "createdAt": "2026-10-15T12:00:00Z", "updatedAt": "2026-10-20T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t04", "task": "Due today", "status": "Pending", "priority": "P3", "company": "Beta", "func": "Sales", "assignedTo": "Cy Dunn", "nextFollowUp": "2026-11-10", "createdAt": "2026-11-05T12:00:00Z", "updatedAt": "2026-11-05T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t05", "task": "Due in 7 days", "status": "In Progress", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Cy Dunn", "nextFollowUp": "2026-11-17", "createdAt": "2026-11-02T12:00:00Z", "updatedAt": "2026-11-08T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t06", "task": "Due in 8 days", "status": "Pending", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Cy Dunn", "nextFollowUp": "2026-11-18", "createdAt": "2026-11-02T12:00:00Z", "updatedAt": "2026-11-08T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t07", "task": "No date, nobody", "status": "Pending", "priority": "P2", "company": "", "func": "", "assignedTo": "", "nextFollowUp": "", "createdAt": "2026-08-01T12:00:00Z", "updatedAt": "2026-10-27T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t08", "task": "Stale exactly 14 days", "status": "Pending", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao", "nextFollowUp": "2026-11-12", "createdAt": "2026-10-01T12:00:00Z", "updatedAt": "2026-10-27T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t09", "task": "Not stale 13 days", "status": "Pending", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao", "nextFollowUp": "2026-11-12", "createdAt": "2026-10-01T12:00:00Z", "updatedAt": "2026-10-28T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t10", "task": "Done this week", "status": "Completed", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao", "nextFollowUp": "", "createdAt": "2026-10-10T12:00:00Z", "updatedAt": "2026-11-09T12:00:00Z", "closedAt": "2026-11-08T12:00:00Z", "archivedAt": "" },
+    { "id": "t11", "task": "Done shared, no closedAt", "status": "Completed", "priority": "P1", "company": "Beta", "func": "Sales", "assignedTo": "Ben Cole, Cy Dunn", "nextFollowUp": "", "createdAt": "2026-10-12T12:00:00Z", "updatedAt": "2026-11-01T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t12", "task": "Done in previous period", "status": "Completed", "priority": "P2", "company": "Acme", "func": "Sales", "assignedTo": "Cy Dunn", "nextFollowUp": "", "createdAt": "2026-09-01T12:00:00Z", "updatedAt": "2026-10-05T12:00:00Z", "closedAt": "2026-10-05T12:00:00Z", "archivedAt": "" },
+    { "id": "t13", "task": "Done long ago", "status": "Completed", "priority": "P2", "company": "Beta", "func": "Ops", "assignedTo": "Ben Cole", "nextFollowUp": "", "createdAt": "2026-06-01T12:00:00Z", "updatedAt": "2026-07-01T12:00:00Z", "closedAt": "2026-07-01T12:00:00Z", "archivedAt": "" },
+    { "id": "t14", "task": "Dropped", "status": "Dropped", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao", "nextFollowUp": "2026-10-01", "createdAt": "2026-11-03T12:00:00Z", "updatedAt": "2026-11-04T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t15", "task": "Archived open", "status": "Pending", "priority": "P1", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao", "nextFollowUp": "2026-10-01", "createdAt": "2026-11-03T12:00:00Z", "updatedAt": "2026-11-04T12:00:00Z", "closedAt": "", "archivedAt": "2026-11-05T12:00:00Z" },
+    { "id": "t16", "task": "No company, new", "status": "In Progress", "priority": "P2", "company": "", "func": "Ops", "assignedTo": "Dee Eve", "nextFollowUp": "2026-11-11", "createdAt": "2026-11-09T12:00:00Z", "updatedAt": "2026-11-09T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t17", "task": "Created previous period", "status": "Pending", "priority": "P2", "company": "Acme", "func": "", "assignedTo": "Dee Eve", "nextFollowUp": "2026-11-20", "createdAt": "2026-10-05T12:00:00Z", "updatedAt": "2026-11-06T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t18", "task": "Created exactly 30 days ago", "status": "Pending", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Dee Eve", "nextFollowUp": "2026-11-30", "createdAt": "2026-10-11T12:00:00Z", "updatedAt": "2026-11-06T12:00:00Z", "closedAt": "", "archivedAt": "" },
+    { "id": "t19", "task": "Created 7 days ago", "status": "Completed", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Dee Eve", "nextFollowUp": "", "createdAt": "2026-11-03T12:00:00Z", "updatedAt": "2026-11-03T12:00:00Z", "closedAt": "2026-11-03T12:00:00Z", "archivedAt": "" },
+    { "id": "t20", "task": "Untitled", "status": "Pending", "priority": "P2", "company": "Acme", "func": "Ops", "assignedTo": "Asha Rao", "nextFollowUp": "2026-11-14", "createdAt": "", "updatedAt": "", "closedAt": "", "archivedAt": "" }
+  ],
+  "leads": [
+    { "id": 1, "stage": "Contacted", "amount": 100000, "stageChangedAt": "2026-11-05T12:00:00Z", "updatedAt": "2026-11-05T12:00:00Z" },
+    { "id": 2, "stage": "Contacted", "amount": "250000", "stageChangedAt": "", "updatedAt": "2026-10-01T12:00:00Z" },
+    { "id": 3, "stage": "Proposal", "amount": null, "stageChangedAt": "2026-11-01T12:00:00Z", "updatedAt": "2026-11-01T12:00:00Z" },
+    { "id": 4, "stage": "Won", "amount": 500000, "stageChangedAt": "2026-11-02T12:00:00Z", "updatedAt": "2026-11-02T12:00:00Z" },
+    { "id": 5, "stage": "Won", "amount": 90000, "stageChangedAt": "", "updatedAt": "2026-07-02T12:00:00Z" },
+    { "id": 6, "stage": "Lost", "amount": 70000, "stageChangedAt": "2026-10-30T12:00:00Z", "updatedAt": "2026-10-30T12:00:00Z" },
+    { "id": 7, "stage": "Lost", "amount": 0, "stageChangedAt": "2026-08-30T12:00:00Z", "updatedAt": "2026-08-30T12:00:00Z" }
+  ],
+  "escalations": [
+    { "id": 1, "status": "open" },
+    { "id": 2, "status": "closed" },
+    { "id": 3, "status": "open" }
+  ],
+  "cases": [
+    { "name": "default", "filters": {} },
+    { "name": "range7", "filters": { "range": "7" } },
+    { "name": "range90", "filters": { "range": "90" } },
+    { "name": "rangeALL", "filters": { "range": "ALL" } },
+    { "name": "companyAcme", "filters": { "company": "Acme" } },
+    { "name": "noCompany", "filters": { "company": "No company" } },
+    { "name": "personAsha", "filters": { "person": "Asha Rao" } },
+    { "name": "personUnassigned", "filters": { "person": "Unassigned" } },
+    { "name": "acmeBen7", "filters": { "company": "Acme", "person": "Ben Cole", "range": "7" } }
+  ]
+}
